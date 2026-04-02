@@ -77,14 +77,14 @@ function MappingNodeInner({ data }: NodeProps) {
         <Handle
           type="source"
           position={Position.Right}
-          className="w-2.5! h-2.5! border-2! border-[oklch!(0.65_0.2_250)] bg-[oklch!(0.16_0.025_265)] right-[-5px]!"
+          className="w-2.5! h-2.5! border-2! border-[oklch(0.65_0.2_250)]! bg-[oklch(0.16_0.025_265)]! right-[-5px]!"
         />
       )}
       {!isSource && (
         <Handle
           type="target"
           position={Position.Left}
-          className="w-2.5! h-2.5! border-2! border-[oklch!(0.55_0.18_285)] bg-[oklch!(0.14_0.02_280)] left-[-5px]!"
+          className="w-2.5! h-2.5! border-2! border-[oklch(0.55_0.18_285)]! bg-[oklch(0.14_0.02_280)]! left-[-5px]!"
         />
       )}
     </div>
