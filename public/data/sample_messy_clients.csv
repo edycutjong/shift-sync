@@ -1,0 +1,6 @@
+client_fname,client_lname,emaill,phone_num,company_name,jobtitle,dob,legacy_id,notes
+John,Doe, john.doe@XYZ.com ,555-0101,Acme Corp,Manager,05/15/1985,C-101,VIP client
+Jane,Smith,JANE@smith.co.uk,  555-0102 ,TechFlow,Engineer,1990-08-22,C-102,
+Alice,Johnson,alice@invalid_email,555-0103,DataSync,"Data Scientist",invalid_date,C-103,Follow up next week
+Bob,Williams,bob.w@startup.io,,StartupInc,Founder,12/01/1975,C-104,
+Charlie,Brown,charlie.b@enterprises.com,555-0105,BigCo,,2000-02-14,C-105,
