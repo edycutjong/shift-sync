@@ -4,12 +4,10 @@ import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
-  ArrowRight,
   CheckCircle2,
   Loader2,
   Sparkles,
   RotateCcw,
-  Database,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";

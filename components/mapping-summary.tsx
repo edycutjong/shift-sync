@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, ArrowLeft, Loader2, BarChart3 } from "lucide-react";
+import { motion } from "framer-motion";
+import { CheckCircle, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
@@ -53,9 +53,9 @@ export function MappingSummary({ mapping, validation }: MappingSummaryProps) {
       {/* Confidence breakdown */}
       <div className="space-y-2">
         <p className="text-xs font-medium text-muted-foreground">Confidence Breakdown</p>
-        <ConfidenceRow label="High (≥90%)" count={highConfidence} total={totalMappings} color="oklch(0.7 0.18 160)" />
-        <ConfidenceRow label="Medium (70-90%)" count={mediumConfidence} total={totalMappings} color="oklch(0.8 0.16 80)" />
-        <ConfidenceRow label="Low (<70%)" count={lowConfidence} total={totalMappings} color="oklch(0.6 0.2 25)" />
+        <ConfidenceRow label="High (≥90%)" count={highConfidence} color="oklch(0.7 0.18 160)" />
+        <ConfidenceRow label="Medium (70-90%)" count={mediumConfidence} color="oklch(0.8 0.16 80)" />
+        <ConfidenceRow label="Low (<70%)" count={lowConfidence} color="oklch(0.6 0.2 25)" />
       </div>
 
       {/* Unmapped columns */}
@@ -109,12 +109,10 @@ function StatCard({ label, value, color }: { label: string; value: string; color
 function ConfidenceRow({
   label,
   count,
-  total,
   color,
 }: {
   label: string;
   count: number;
-  total: number;
   color: string;
 }) {
   return (
