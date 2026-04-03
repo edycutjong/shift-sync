@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { CheckCircle, BarChart3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import type { MappingResponse, ValidationResult } from "@/lib/schemas";
 

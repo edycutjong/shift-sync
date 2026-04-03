@@ -12,7 +12,6 @@ import {
   Brain,
   ShieldCheck,
   FileOutput,
-  Upload as UploadIcon,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
