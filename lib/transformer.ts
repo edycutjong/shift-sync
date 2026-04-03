@@ -44,7 +44,7 @@ export function applyTransforms(
                 field: mapping.target,
                 message: `Could not parse date: "${row[sourceIndex]}"`,
               });
-              value = row[sourceIndex] ?? "";
+              value = String(row[sourceIndex]);
             }
             break;
           case "validate_email":

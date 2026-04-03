@@ -41,14 +41,15 @@ describe('transformer: applyTransforms', () => {
   });
 
   it('parses dates and catches invalid ones', () => {
-    const headers = ['dob1', 'dob2', 'dob3', 'dob4', 'dob5'];
-    const rows = [['1990-05-15', '15/05/1990', 'invalid_date', '  ', '14.02.2000']]; // ISO, DD/MM/YYYY, invalid, empty, DD.MM.YYYY
+    const headers = ['dob1', 'dob2', 'dob3', 'dob4', 'dob5', 'dob6'];
+    const rows = [['1990-05-15', '15/05/1990', 'invalid_date', '  ', '14.02.2000', '99/99/2023']]; // ISO, DD/MM/YYYY, invalid, empty, DD.MM.YYYY, invalid-format
     const mappings = [
       { source: 'dob1', target: 'd1', confidence: 1, transform: 'parse_date' },
       { source: 'dob2', target: 'd2', confidence: 1, transform: 'parse_date' },
       { source: 'dob3', target: 'd3', confidence: 1, transform: 'parse_date' },
       { source: 'dob4', target: 'd4', confidence: 1, transform: 'parse_date' },
       { source: 'dob5', target: 'd5', confidence: 1, transform: 'parse_date' },
+      { source: 'dob6', target: 'd6', confidence: 1, transform: 'parse_date' },
     ];
 
     const { transformedRows, errors } = applyTransforms(rows, headers, mappings);
@@ -58,9 +59,11 @@ describe('transformer: applyTransforms', () => {
     expect(transformedRows[0].d3).toBe('invalid_date');
     expect(transformedRows[0].d4).toBe('');
     expect(transformedRows[0].d5).toMatch(/^2000-02-14/);
+    expect(transformedRows[0].d6).toBe('99/99/2023'); // Should fallback to exactly original invalid
     
-    expect(errors).toHaveLength(1);
+    expect(errors).toHaveLength(2); // 'invalid_date' and '99/99/2023'
     expect(errors[0].field).toBe('d3');
+    expect(errors[1].field).toBe('d6');
   });
 
   it('validates emails correctly', () => {
