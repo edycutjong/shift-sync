@@ -1,3 +1,17 @@
+<div align="center">
+  <img src="./docs/banner.png" alt="ShiftSync Banner" width="100%" />
+</div>
+
+<div align="center">
+
+[![CI Status](https://github.com/edycutjong/shift-sync/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/shift-sync/actions)
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)
+![React Flow](https://img.shields.io/badge/React%20Flow-UI-ff0072?style=flat&logo=react)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT%204o-412991?style=flat&logo=openai)
+![Tailwind](https://img.shields.io/badge/Tailwind-CSS%20v4-38bdf8?style=flat&logo=tailwindcss)
+
+</div>
+
 # 🚀 ShiftSync - The AI-Powered Data Harmonizer
 
 ShiftSync is a modern, AI-powered tool built to solve one of software engineering's biggest headaches: **intelligent data ingestion and schema mapping**.

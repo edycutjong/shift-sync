@@ -13,6 +13,8 @@ import {
   ShieldCheck,
   FileOutput,
   Zap,
+  History,
+  Download,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -20,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { FileDropzone } from "@/components/file-dropzone";
 import { DataPreview } from "@/components/data-preview";
 import { MappingGraph } from "@/components/mapping-graph";
+import Papa from "papaparse";
 import { MappingSummary } from "@/components/mapping-summary";
 import {
   type ParsedData,
@@ -153,9 +156,184 @@ export default function AppPage() {
   }, [parsedData]);
 
   const handleApprove = useCallback(() => {
+    // Save to local storage for hackathon history
+    if (parsedData && validation && mapping) {
+      const historyEntry = {
+        id: crypto.randomUUID(),
+        date: new Date().toISOString(),
+        fileName: parsedData.fileName,
+        totalRows: parsedData.totalRows,
+        validRows: validation.summary.valid,
+        invalidRows: validation.summary.invalid,
+        mappedFieldsCount: mapping.mappings.length,
+      };
+      try {
+        const existing = JSON.parse(localStorage.getItem("shiftsync_history") || "[]");
+        localStorage.setItem("shiftsync_history", JSON.stringify([historyEntry, ...existing]));
+      } catch (e) {
+        console.error("Failed to save history", e);
+      }
+    }
+
     toast.success("Data approved and ingested! 🎉");
     setState("success");
-  }, []);
+  }, [parsedData, validation, mapping]);
+
+  const handleDownloadReport = useCallback(() => {
+    if (!parsedData || !validation || !mapping) return;
+
+    const htmlReport = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ingestion Report - ${parsedData.fileName}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f9fafb; color: #111827; line-height: 1.5; padding: 40px; margin: 0; }
+    .container { max-w: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+    .header { border-bottom: 2px solid #e5e7eb; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
+    h1 { margin: 0; color: #111827; font-size: 24px; }
+    .timestamp { color: #6b7280; font-size: 14px; }
+    h2 { font-size: 18px; margin-top: 30px; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 30px; }
+    .stat-card { background: #f3f4f6; padding: 16px; border-radius: 8px; text-align: center; }
+    .stat-value { font-size: 24px; font-weight: 700; color: #4f46e5; }
+    .stat-label { font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+    .success { color: #10b981; }
+    .error { color: #ef4444; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
+    th { text-align: left; background: #f9fafb; padding: 12px; font-weight: 600; color: #374151; border-bottom: 1px solid #e5e7eb; border-top: 1px solid #e5e7eb; }
+    td { padding: 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; background: #fee2e2; color: #991b1b; }
+    .errors-list { margin: 0; padding-left: 20px; color: #b91c1c; }
+    pre { background: #f3f4f6; padding: 8px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>ShiftSync Ingestion Report</h1>
+        <div style="margin-top: 8px; font-weight: 500;">Source File: ${parsedData.fileName}</div>
+      </div>
+      <div class="timestamp">Generated: ${new Date().toLocaleString()}</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">${validation.summary.total}</div>
+        <div class="stat-label">Total Rows</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value success">${validation.summary.valid}</div>
+        <div class="stat-label">Successfully Mapped</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value ${validation.summary.invalid > 0 ? 'error' : ''}">${validation.summary.invalid}</div>
+        <div class="stat-label">Failed Validation</div>
+      </div>
+    </div>
+
+    <h2>Applied Mapping Rules</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Source Column</th>
+          <th>Target Field</th>
+          <th>Transforms Applied</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${mapping.mappings.map(m => `
+          <tr>
+            <td><code>${m.source}</code></td>
+            <td><strong>${m.target}</strong></td>
+            <td>${m.transform.split(',').map(t => `<span style="background: #e5e7eb; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-right: 4px;">${t}</span>`).join('')}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    ${validation.invalidRows.length > 0 ? `
+    <h2>Validation Anomalies</h2>
+    <table>
+      <thead>
+        <tr>
+          <th width="10%">Row #</th>
+          <th width="45%">Source Data Sample</th>
+          <th width="45%">Validation Errors</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${validation.invalidRows.map(err => `
+          <tr>
+            <td><strong>${err.rowIndex + 1}</strong></td>
+            <td><pre>${JSON.stringify(err.row, null, 2)}</pre></td>
+            <td>
+              <ul class="errors-list">
+                ${err.errors.map(e => `<li>${e}</li>`).join('')}
+              </ul>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    ` : `
+    <div style="margin-top: 40px; padding: 20px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; color: #065f46; text-align: center;">
+      <h3 style="margin: 0 0 8px 0;">🎉 Perfect Ingestion</h3>
+      <p style="margin: 0; font-size: 14px;">All rows were successfully validated and mapped against the target schema. Zero anomalies detected!</p>
+    </div>
+    `}
+    
+    <div style="margin-top: 50px; text-align: center; color: #9ca3af; font-size: 12px;">
+      Report securely generated by ShiftSync engine
+    </div>
+  </div>
+</body>
+</html>`;
+
+    // Trigger HTML download
+    const blob = new Blob([htmlReport], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `shiftsync-report-${new Date().getTime()}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success("HTML Report downloaded");
+  }, [parsedData, validation, mapping]);
+
+  const handleDownloadCSV = useCallback((type: "valid" | "invalid") => {
+    if (!validation) return;
+    
+    // Choose which dataset to export
+    const rowsToExport = type === "valid" 
+      ? validation.validRows 
+      : validation.invalidRows.map(entry => entry.row);
+      
+    if (rowsToExport.length === 0) {
+       toast.error(`No ${type} rows to download.`);
+       return;
+    }
+
+    // Convert to CSV
+    const csvContent = Papa.unparse(rowsToExport);
+    
+    // Trigger download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `shiftsync-${type}Rows-${new Date().getTime()}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success(`Downloaded ${type} rows CSV`);
+  }, [validation]);
 
   const handleReset = useCallback(() => {
     setParsedData(null);
@@ -179,7 +357,7 @@ export default function AppPage() {
       {/* Header */}
       <header className="relative z-10 border-b border-border/50 bg-[oklch(0.1_0.015_265/80%)] backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-1">
             <Link
               href="/"
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -191,7 +369,7 @@ export default function AppPage() {
           </div>
 
           {/* Step indicator with labels */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center justify-center gap-1 flex-none">
             {states.map((s, i) => (
               <div key={s} className="flex items-center">
                 <div className="flex items-center gap-1.5">
@@ -227,6 +405,15 @@ export default function AppPage() {
                 )}
               </div>
             ))}
+          </div>
+
+          <div className="flex items-center justify-end flex-1">
+            <Link href="/app/history">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                <History className="w-4 h-4 mr-2" />
+                History
+              </Button>
+            </Link>
           </div>
         </div>
       </header>
@@ -570,17 +757,51 @@ export default function AppPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="flex justify-center gap-4 pt-4"
+                className="flex flex-col items-center justify-center gap-4 pt-4 w-full"
               >
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={handleReset}
-                  className="h-12 rounded-xl"
-                >
-                  <RotateCcw className="mr-2 w-4 h-4" />
-                  Upload Another File
-                </Button>
+                <div className="flex justify-center gap-4 w-full">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={handleDownloadReport}
+                    className="h-12 rounded-xl flex-1 max-w-[200px]"
+                  >
+                    <Download className="mr-2 w-4 h-4" />
+                    Download Report
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={handleReset}
+                    className="h-12 rounded-xl border-[oklch(0.7_0.18_160/20%)] text-[oklch(0.7_0.18_160)] hover:bg-[oklch(0.7_0.18_160/10%)] hover:text-[oklch(0.7_0.18_160)] flex-1 max-w-[200px]"
+                  >
+                    <RotateCcw className="mr-2 w-4 h-4" />
+                    Upload Another
+                  </Button>
+                </div>
+                
+                <div className="flex flex-wrap justify-center gap-4 w-full mt-2">
+                  {(validation?.summary.valid ?? 0) > 0 && (
+                     <Button
+                       variant="ghost"
+                       onClick={() => handleDownloadCSV("valid")}
+                       className="text-muted-foreground hover:text-foreground hover:bg-[oklch(0.7_0.18_160/10%)]"
+                     >
+                       <FileOutput className="mr-2 w-4 h-4" />
+                       Download Cleaned Data (CSV)
+                     </Button>
+                  )}
+                  {(validation?.summary.invalid ?? 0) > 0 && (
+                     <Button
+                       variant="ghost"
+                       onClick={() => handleDownloadCSV("invalid")}
+                       className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                     >
+                       <FileOutput className="mr-2 w-4 h-4" />
+                       Download Rejected Rows (CSV)
+                     </Button>
+                  )}
+                </div>
               </motion.div>
             </motion.div>
           )}

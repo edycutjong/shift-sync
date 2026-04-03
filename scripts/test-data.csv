@@ -1,0 +1,8 @@
+first_name_messy,last_name_mixed,email_addr,dept,join_date,internal_id,salary
+John,Doe,john.doe@company.com,Engineering,2023-01-15,ENG001,120000
+Jane,,jane.smith@company.com,Marketing,02/20/2023,,95000
+Bob,Jones,invalid-email,Sales,2023-03-10,SAL005,85000
+Alice,Williams,alice.w@company.com,Engineering,March 5th 2023,ENG002,130000
+Charlie,Brown,charlie.b@company.com,Design,2023-04-01,DES010,
+,,missing.names@company.com,,,UNKWN,50000
+Eve,Davis,eve.d@company.com,Engineering,2023-05-12,ENG003,115000
