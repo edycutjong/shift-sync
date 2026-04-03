@@ -82,3 +82,49 @@ export const fallbackMapping: MappingResponse = {
   unmapped_source: ["legacy_id", "notes"],
   missing_target: [],
 };
+
+/* ─── Dynamic Fallback Generator ─── */
+
+export function generateFallbackMapping(headers: string[]): MappingResponse {
+  const mappings: MappingItem[] = [];
+  const mappedTargets = new Set<string>();
+  const mappedSources = new Set<string>();
+
+  const heuristics: Record<string, string[]> = {
+    first_name: ["first_name", "first name", "fname", "first", "client_fname"],
+    last_name: ["last_name", "last name", "lname", "last", "client_lname"],
+    email: ["email", "emaill", "mail"],
+    phone: ["phone", "phone_num", "cell"],
+    company: ["company", "org", "company_name"],
+    title: ["title", "role", "jobtitle", "job title", "position"],
+    date_of_birth: ["birth_date", "dob", "date_of_birth", "birth date", "birthday"],
+  };
+
+  const defaultTransforms: Record<string, string> = {
+    email: "lowercase,trim,validate_email",
+    date_of_birth: "parse_date",
+  };
+
+  for (const [target, hints] of Object.entries(heuristics)) {
+    // Find first matching header
+    const match = headers.find(h => 
+      hints.some(hint => h.toLowerCase().includes(hint))
+    );
+
+    if (match && !mappedSources.has(match)) {
+      mappings.push({
+        source: match,
+        target,
+        confidence: 0.85,
+        transform: defaultTransforms[target] || "trim"
+      });
+      mappedSources.add(match);
+      mappedTargets.add(target);
+    }
+  }
+
+  const unmapped_source = headers.filter(h => !mappedSources.has(h));
+  const missing_target = Object.keys(targetSchema).filter(t => !mappedTargets.has(t));
+
+  return { mappings, unmapped_source, missing_target };
+}

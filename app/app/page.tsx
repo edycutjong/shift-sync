@@ -29,6 +29,7 @@ import {
   type MappingResponse,
   type ValidationResult,
   fallbackMapping,
+  generateFallbackMapping,
 } from "@/lib/schemas";
 import { applyTransforms } from "@/lib/transformer";
 import { validateRows } from "@/lib/validator";
@@ -107,10 +108,10 @@ export default function AppPage() {
       if (res.ok) {
         mappingResult = await res.json();
       } else {
-        // Fallback to hardcoded mapping for demo reliability
+        // Fallback to dynamic mapping for demo reliability
         console.warn("API failed, using fallback mapping");
         await new Promise((r) => setTimeout(r, 1500));
-        mappingResult = fallbackMapping;
+        mappingResult = generateFallbackMapping(parsedData.headers);
       }
 
       setMapping(mappingResult);
@@ -138,12 +139,13 @@ export default function AppPage() {
     } catch (err) {
       console.error(err);
       await new Promise((r) => setTimeout(r, 1000));
-      setMapping(fallbackMapping);
+      const fbMapping = generateFallbackMapping(parsedData.headers);
+      setMapping(fbMapping);
 
       const { transformedRows } = applyTransforms(
         parsedData.rows,
         parsedData.headers,
-        fallbackMapping.mappings
+        fbMapping.mappings
       );
       const validationResult = validateRows(transformedRows);
       setValidation(validationResult);
