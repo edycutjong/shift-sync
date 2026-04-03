@@ -63,7 +63,9 @@ export function FileDropzone({ onFileParsed, isLoading }: FileDropzoneProps) {
   const reset = useCallback(() => {
     setFileName(null);
     setError(null);
-    if (inputRef.current) inputRef.current.value = "";
+    if (inputRef.current) {
+       inputRef.current.value = "";
+    }
   }, []);
 
   return (

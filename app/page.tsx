@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, Variants, useMotionValue, useTransform, useSpring } from "framer-motion";
-import { ArrowRight, Upload, GitBranch, CheckCircle2, Zap, ChevronRight } from "lucide-react";
+import { ArrowRight, Upload, GitBranch, CheckCircle2, Zap } from "lucide-react";
 import Link from "next/link";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";

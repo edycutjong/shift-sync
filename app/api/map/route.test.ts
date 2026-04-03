@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 const mockParse = jest.fn();
 
 jest.mock("next/server", () => ({
@@ -29,12 +30,12 @@ import OpenAI from "openai";
 
 describe("POST /api/map", () => {
   let originalEnv: NodeJS.ProcessEnv;
-  let mockOpenAI: any;
+  let mockOpenAI: unknown;
 
   beforeAll(() => {
     originalEnv = process.env;
     if (!global.structuredClone) {
-      global.structuredClone = (val: any) => JSON.parse(JSON.stringify(val));
+      global.structuredClone = (val: unknown) => JSON.parse(JSON.stringify(val));
     }
   });
 
@@ -48,7 +49,7 @@ describe("POST /api/map", () => {
     process.env = originalEnv;
   });
 
-  const createMockRequest = (body: any) => {
+  const createMockRequest = (body: unknown) => {
     return {
       json: jest.fn().mockResolvedValue(body),
     } as unknown as Request;

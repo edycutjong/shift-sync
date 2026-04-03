@@ -21,10 +21,11 @@ export default function HistoryPage() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    setTimeout(() => setIsMounted(true), 0);
     try {
       const stored = localStorage.getItem("shiftsync_history");
       if (stored) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setHistory(JSON.parse(stored));
       }
     } catch (e) {

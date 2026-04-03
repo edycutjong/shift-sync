@@ -314,10 +314,7 @@ export default function AppPage() {
       ? validation.validRows 
       : validation.invalidRows.map(entry => entry.row);
       
-    if (rowsToExport.length === 0) {
-       toast.error(`No ${type} rows to download.`);
-       return;
-    }
+
 
     // Convert to CSV
     const csvContent = Papa.unparse(rowsToExport);

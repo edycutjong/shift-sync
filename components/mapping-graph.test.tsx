@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react/display-name, @typescript-eslint/no-require-imports */
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MappingGraph } from "./mapping-graph";
 
@@ -24,16 +25,45 @@ jest.mock("@xyflow/react", () => {
 });
 
 jest.mock("framer-motion", () => {
+   
   const React = require("react");
   const actual = jest.requireActual("framer-motion");
   return {
     ...actual,
     motion: {
       ...actual.motion,
-      div: React.forwardRef((props: any, ref: any) => {
+      div: Object.assign(React.forwardRef((props: any, ref: any) => {
         const { initial, animate, exit, variants, transition, ...rest } = props;
         return <div ref={ref} {...rest} />;
-      }),
+      }), { displayName: "MotionDiv" }),
+      span: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionSpan" }),
+      a: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionA" }),
+      button: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionButton" }),
+      p: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionP" }),
+      h1: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionH1" }),
+      h2: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionH2" }),
+      h3: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionH3" }),
     },
   };
 });

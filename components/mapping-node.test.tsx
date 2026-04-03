@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import { render, screen } from "@testing-library/react";
 import { MappingNode } from "./mapping-node";
 import { Position } from "@xyflow/react";
@@ -25,7 +26,7 @@ describe("MappingNode", () => {
     };
 
     render(
-      <MappingNode 
+      <MappingNode draggable={false} dragging={false} selectable={false} deletable={false} 
         id="1" 
         data={data as any} 
         dragHandle={undefined} 
@@ -55,7 +56,7 @@ describe("MappingNode", () => {
     };
 
     render(
-      <MappingNode 
+      <MappingNode draggable={false} dragging={false} selectable={false} deletable={false} 
         id="2" 
         data={data as any} 
         dragHandle={undefined} 
@@ -88,7 +89,7 @@ describe("MappingNode", () => {
 
     cases.forEach(({ isUnmapped, confidence, expectedColor }, index) => {
       const { container, unmount } = render(
-        <MappingNode 
+        <MappingNode draggable={false} dragging={false} selectable={false} deletable={false} 
           key={index}
           id="1" 
           data={{ ...baseData, isUnmapped, confidence } as any} 

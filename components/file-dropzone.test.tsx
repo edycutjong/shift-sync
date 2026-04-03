@@ -1,22 +1,48 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react/display-name, @typescript-eslint/no-require-imports */
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { FileDropzone } from "./file-dropzone";
 import { parseFile } from "@/lib/parser";
 
 jest.mock("framer-motion", () => {
+   
   const React = require("react");
   const actual = jest.requireActual("framer-motion");
   return {
     ...actual,
     motion: {
       ...actual.motion,
-      div: React.forwardRef((props: any, ref: any) => {
+      div: Object.assign(React.forwardRef((props: any, ref: any) => {
         const { initial, animate, exit, variants, transition, ...rest } = props;
         return <div ref={ref} {...rest} />;
-      }),
-      p: React.forwardRef((props: any, ref: any) => {
+      }), { displayName: "MotionDiv" }),
+      span: Object.assign(React.forwardRef((props: any, ref: any) => {
         const { initial, animate, exit, variants, transition, ...rest } = props;
-        return <p ref={ref} {...rest} />;
-      }),
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionSpan" }),
+      a: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionA" }),
+      button: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionButton" }),
+      p: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionP" }),
+      h1: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionH1" }),
+      h2: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionH2" }),
+      h3: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionH3" }),
     },
     AnimatePresence: ({ children }: any) => <>{children}</>,
   };
@@ -213,5 +239,31 @@ describe("FileDropzone", () => {
     
     // Should NOT have called click because fileName is set
     expect(clickSpy).not.toHaveBeenCalled();
+    clickSpy.mockRestore();
+  });
+
+  it("handles drop with no files", () => {
+    const { container } = render(<FileDropzone onFileParsed={mockOnFileParsed} />);
+    const dropzone = container.querySelector(".dropzone-idle") as HTMLElement;
+    fireEvent.drop(dropzone, {
+      dataTransfer: { files: [] },
+    });
+    expect(parseFile).not.toHaveBeenCalled();
+  });
+
+  it("handles input change with no files", () => {
+    render(<FileDropzone onFileParsed={mockOnFileParsed} />);
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [] } });
+    expect(parseFile).not.toHaveBeenCalled();
+  });
+
+  it("triggers input click if fileName is not set", () => {
+    const { container } = render(<FileDropzone onFileParsed={mockOnFileParsed} />);
+    const clickSpy = jest.spyOn(HTMLInputElement.prototype, "click");
+    const dropzone = container.querySelector(".dropzone-idle") as HTMLElement;
+    fireEvent.click(dropzone);
+    expect(clickSpy).toHaveBeenCalled();
+    clickSpy.mockRestore();
   });
 });

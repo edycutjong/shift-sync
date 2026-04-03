@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react/display-name, @typescript-eslint/no-require-imports */
 import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import AppPage from "./page";
 import * as transformer from "@/lib/transformer";
@@ -36,6 +37,7 @@ jest.mock("sonner", () => ({
 
 // Mock framer-motion minimally
 jest.mock("framer-motion", () => {
+   
   const React = require("react");
   const actual = jest.requireActual("framer-motion");
   return {
@@ -43,10 +45,38 @@ jest.mock("framer-motion", () => {
     AnimatePresence: ({ children }: any) => <>{children}</>,
     motion: {
       ...actual.motion,
-      div: React.forwardRef((props: any, ref: any) => {
+      div: Object.assign(React.forwardRef((props: any, ref: any) => {
         const { initial, animate, exit, variants, transition, ...rest } = props;
         return <div ref={ref} {...rest} />;
-      }),
+      }), { displayName: "MotionDiv" }),
+      span: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionSpan" }),
+      a: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionA" }),
+      button: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionButton" }),
+      p: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionP" }),
+      h1: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionH1" }),
+      h2: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionH2" }),
+      h3: Object.assign(React.forwardRef((props: any, ref: any) => {
+        const { initial, animate, exit, variants, transition, ...rest } = props;
+        return <div ref={ref} {...rest} />;
+      }), { displayName: "MotionH3" }),
     },
   };
 });
@@ -96,8 +126,8 @@ describe("AppPage", () => {
       expect(screen.getByText("Data Ingested! 🎉")).toBeInTheDocument();
     });
 
-    // Reset via Upload Another File
-    const resetBtn = screen.getByText("Upload Another File").closest("button")!;
+    // Reset via Upload Another
+    const resetBtn = screen.getByText("Upload Another").closest("button")!;
     fireEvent.click(resetBtn);
 
     // Back to upload state
@@ -177,12 +207,114 @@ describe("AppPage", () => {
     }, { timeout: 3000 });
   });
 
-  it("can also trigger through the dropzone", async () => {
+  it("can also trigger through the dropzone and download invalid rows", async () => {
+    const mockCreateObjectURL = jest.fn().mockReturnValue("blob:mock-url");
+    const mockRevokeObjectURL = jest.fn();
+    global.URL.createObjectURL = mockCreateObjectURL;
+    global.URL.revokeObjectURL = mockRevokeObjectURL;
+    const mockClick = jest.spyOn(window.HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+
+    // Mock localStorage to throw error
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = jest.fn(() => {
+      throw new Error("Local storage full");
+    });
+
     render(<AppPage />);
     const dropzone = screen.getByTestId("dropzone");
     fireEvent.click(dropzone);
     await waitFor(() => {
       expect(screen.getByText("Map with AI")).toBeInTheDocument();
     });
+
+    globalFetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => fallbackMapping,
+    });
+    fireEvent.click(screen.getByText("Map with AI").closest("button")!);
+    
+    await waitFor(() => {
+      expect(screen.getByText("Approve & Ingest")).toBeInTheDocument();
+    }, { timeout: 3000 });
+    
+    const approveBtn = screen.getByRole("button", { name: /Approve & Ingest/i });
+    fireEvent.click(approveBtn);
+    
+    await waitFor(() => {
+      expect(screen.getByText("Data Ingested! 🎉")).toBeInTheDocument();
+    });
+
+    const dlInvalidBtn = screen.getByRole("button", { name: /Download Rejected Rows/i });
+    fireEvent.click(dlInvalidBtn);
+    
+    const dlReportBtn = screen.getByRole("button", { name: /Download Report/i });
+    fireEvent.click(dlReportBtn);
+    
+    expect(mockCreateObjectURL).toHaveBeenCalled();
+    expect(mockClick).toHaveBeenCalled();
+    mockClick.mockRestore();
+
+    // Restore setItem
+    Storage.prototype.setItem = originalSetItem;
+  });
+
+  it("downloads CSV of valid and invalid rows", async () => {
+    const mockCreateObjectURL = jest.fn().mockReturnValue("blob:mock-url");
+    const mockRevokeObjectURL = jest.fn();
+    global.URL.createObjectURL = mockCreateObjectURL;
+    global.URL.revokeObjectURL = mockRevokeObjectURL;
+
+    const mockClick = jest.spyOn(window.HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+
+    render(<AppPage />);
+    
+    // Use the Clean Data sample to ensure we get valid rows
+    const cleanDataBtn = screen.getByText("Clean Data").closest("button");
+    fireEvent.click(cleanDataBtn!);
+    
+    await waitFor(() => {
+      expect(screen.getByText("Map with AI")).toBeInTheDocument();
+    });
+    
+    globalFetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        mappings: [
+          { source: "first_name", target: "first_name", confidence: 1, transform: "" },
+          { source: "last_name", target: "last_name", confidence: 1, transform: "" },
+          { source: "email", target: "email", confidence: 1, transform: "" },
+          { source: "phone", target: "phone", confidence: 1, transform: "" },
+          { source: "company", target: "company", confidence: 1, transform: "" },
+          { source: "role", target: "title", confidence: 1, transform: "" },
+        ],
+        unmapped_source: [],
+        missing_target: []
+      }),
+    });
+    fireEvent.click(screen.getByText("Map with AI").closest("button")!);
+    
+    await waitFor(() => {
+      expect(screen.getByText("Approve & Ingest")).toBeInTheDocument();
+    }, { timeout: 3000 });
+    
+    const approveBtn = screen.getByRole("button", { name: /Approve & Ingest/i });
+    fireEvent.click(approveBtn);
+    
+    await waitFor(() => {
+      expect(screen.getByText("Data Ingested! 🎉")).toBeInTheDocument();
+    });
+
+    const dlValidBtn = screen.getByRole("button", { name: /Download Cleaned Data/i });
+    fireEvent.click(dlValidBtn);
+    expect(mockCreateObjectURL).toHaveBeenCalled();
+    expect(mockClick).toHaveBeenCalled();
+
+    const dlReportBtn = screen.getByRole("button", { name: /Download Report/i });
+    fireEvent.click(dlReportBtn);
+    
+    const startOverBtn = screen.getByRole("button", { name: /Upload Another/i });
+    fireEvent.click(startOverBtn);
+    
+    mockClick.mockRestore();
   });
 });
