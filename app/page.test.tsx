@@ -121,19 +121,28 @@ jest.mock("framer-motion", () => {
 
 // Avoid 'Element is not defined' or 'getBoundingClientRect' errors
 beforeAll(() => {
-  Element.prototype.getBoundingClientRect = jest.fn(() => {
-    return {
-      width: 300,
-      height: 400,
-      top: 0,
-      left: 0,
-      bottom: 400,
-      right: 300,
-      x: 0,
-      y: 0,
-      toJSON: () => {},
-    } as DOMRect;
-  });
+  Element.prototype.getBoundingClientRect = jest.fn(() =>({
+    width: 300,
+    height: 400,
+    top: 0,
+    left: 0,
+    bottom: 400,
+    right: 300,
+    x: 0,
+    y: 0,
+    toJSON: () => {},
+  } as DOMRect));
+});
+
+const originalError = console.error;
+beforeAll(() => {
+  console.error = (...args) => {
+    if (typeof args[0] === 'string' && args[0].includes('was not wrapped in act(')) return;
+    originalError(...args);
+  };
+});
+afterAll(() => {
+  console.error = originalError;
 });
 
 describe("Home Page", () => {

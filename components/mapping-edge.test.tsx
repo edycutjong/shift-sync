@@ -4,7 +4,7 @@ import { ConfidenceEdge } from "./mapping-edge";
 
 // Mock @xyflow/react
 jest.mock("@xyflow/react", () => ({
-  BaseEdge: (props: any) => <path data-testid="base-edge" {...props} />,
+  BaseEdge: ({ interactionWidth, ...props }: any) => <path data-testid="base-edge" {...props} />,
   getBezierPath: jest.fn(() => ["M0,0 C50,0 50,100 100,100", 50, 50]),
 }));
 
