@@ -758,13 +758,13 @@ export default function AppPage() {
                   </div>
                   <div className="glass-card rounded-xl p-4">
                     <p className="text-2xl font-bold font-mono text-[oklch(0.72_0.18_250)]">
-                      {mapping?.mappings.length || 0}
+                      {mapping!.mappings.length}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">Fields Mapped</p>
                   </div>
                   <div className="glass-card rounded-xl p-4">
                     <p className="text-2xl font-bold font-mono text-[oklch(0.8_0.16_80)]">
-                      {validation.summary.invalid}
+                      {validation!.summary.invalid}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">Rows Rejected</p>
                   </div>
@@ -799,7 +799,7 @@ export default function AppPage() {
                 </div>
                 
                 <div className="flex flex-wrap justify-center gap-4 w-full mt-2">
-                  {/* istanbul ignore next */ (validation?.summary.valid ?? 0) > 0 && (
+                  {validation!.summary.valid > 0 && (
                      <Button
                        variant="ghost"
                        onClick={() => handleDownloadCSV("valid")}
@@ -809,7 +809,7 @@ export default function AppPage() {
                        Download Cleaned Data (CSV)
                      </Button>
                   )}
-                  {/* istanbul ignore next */ (validation?.summary.invalid ?? 0) > 0 && (
+                  {validation!.summary.invalid > 0 && (
                      <Button
                        variant="ghost"
                        onClick={() => handleDownloadCSV("invalid")}
