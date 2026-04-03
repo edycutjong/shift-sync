@@ -57,3 +57,6 @@ Any ambiguous or unmapped columns are sent to an interactive mapping graph built
    ```
 
 5. **Open your browser** to [http://localhost:3000](http://localhost:3000)
+
+## License
+This project is open-source and available under the [MIT License](LICENSE).
