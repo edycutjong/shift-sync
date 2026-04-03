@@ -1,0 +1,6 @@
+firstName,lastName,email,phone,companyName,designation,birthDate,sourceId,comments
+Tony,Stark, t.stark@avengers.io ,123-456-7890,Stark Ind.,CEO,1970-05-29,SRC-A,
+Bruce,Banner,hulk@smash.net,,Avengers,Scientist,1969-12-18,SRC-B,Always angry
+Natasha,Romanoff,natasha@shield.gov,555.000.1111,SHIELD,Agent,1984-11-22,SRC-A,Top secret
+Steve,Rogers,s.rogers@shield.gov,555-USA-1234,SHIELD,Captain,1918-07-04,SRC-C,
+Thor,Odinson,thor.asgard,,Asgard,God of Thunder,,SRC-B,Needs email validation

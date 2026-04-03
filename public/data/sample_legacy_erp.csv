@@ -1,0 +1,6 @@
+CUST_ID,F_NAME,L_NAME,CONTACT_EMAIL,PHN_NUMBER,ORG,ROLE,DOB,INTERNAL_NOTES
+ERP-9182,Michael,Scott,m.scott@dunder.com,1-800-555-1234,Dunder Mifflin,Regional Manager,1965/03/15,Needs priority support
+ERP-9183,Dwight,Schrute,dwight.s@dunder.com,,Dunder Mifflin,Assistant to the Regional Manager,Jan 20 1970,
+ERP-9184,Jim,Halpert, jim@dunder.com ,555-0987,Dunder Mifflin,Sales,1978-10-01,
+ERP-9185,Pam,Beesly,pam@invalid,555.4321,Dunder Mifflin,Office Admin,1979/03/25,
+ERP-9186,Ryan,Howard,ryan.h@wuphf.co,+1 555-9999,WUPHF,Temp,1980-05-05,Return client 
