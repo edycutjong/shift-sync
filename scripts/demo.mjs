@@ -76,7 +76,7 @@ async function recordDemo(width, height, outputFolderName) {
   await recordDemo(1440, 1280, 'readme_gif');
 
   // 2nd Run: 1920x1080 - Classic Full HD 16:9 ratio. Perfect for YouTube/Devpost video link!
-  // await recordDemo(1920, 1080, 'youtube_hd');
+  await recordDemo(1920, 1280, 'youtube_hd');
 
   console.log("\n🎉 Both recordings complete!");
 })();
