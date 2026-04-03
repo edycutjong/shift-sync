@@ -1,8 +1,43 @@
-# ShiftSync
+# 🚀 ShiftSync - The AI-Powered Data Harmonizer
 
-ShiftSync is a modern, AI-powered tool for intelligent data ingestion, schema mapping, and validation.
+ShiftSync is a modern, AI-powered tool built to solve one of software engineering's biggest headaches: **intelligent data ingestion and schema mapping**.
 
-## Getting Started
+*Built for Hackathon Submission 2026*
+
+## 💡 Inspiration
+Data ingestion is notoriously difficult. Every client, vendor, and department sends data in different formats, with different headers, and mixed data types. Developers spend hours writing fragile parsing scripts for every new data source. We wanted to automate this tedious process by combining lightning-fast drag-and-drop file parsing, an interactive node-based UX, and the intelligence of Large Language Models to handle schema mapping instantly. 
+
+## ⚙️ What it does
+ShiftSync allows anyone to drag and drop a messy CSV file, parses the data instantly inside their browser, and then uses OpenAI (GPT-4o) to automatically map the disorganized CSV headers to a strict target database schema. 
+Any ambiguous or unmapped columns are sent to an interactive mapping graph built with React Flow, allowing developers to visually debug and manually re-map columns before ingestion. It includes robust row validation to discard corrupt data effortlessly.
+
+## 🛠 How we built it
+- **Framework:** Next.js 15 (App Router)
+- **Styling & UI:** Tailwind CSS (v4), Framer Motion, and custom glassmorphism components
+- **AI Integration:** OpenAI API (`gpt-4o-2024-08-06`) leveraging Structured Outputs (Zod) for deterministic mapping
+- **Graph Visualization:** React Flow 
+- **Parsing & Validation:** PapaParse (client-side chunked parsing) and Zod (schema validation)
+
+## 🤕 Challenges we ran into
+- Building a responsive node-graph where visual elements adapt perfectly alongside fluid flexbox layouts.
+- Structuring LLM prompts to consistently return deterministic schema mappings instead of conversational text.
+- Managing client-side parsing without blocking the main event thread, ensuring the glowing animations remain buttery smooth.
+
+## 🏆 Accomplishments that we're proud of
+- The seamless, highly aesthetic "glassmorphism" UI which integrates incredibly complex React Flow nodes into a seamless user experience.
+- Moving the burden of schema matching from manual regex and scripting to instantaneous AI matching.
+- Achieving a completely serverless architecture that doesn't store sensitive PII user data anywhere during the mapping process.
+
+## 🚀 What's next for ShiftSync
+- Supporting custom target schemas input by users (e.g. uploading a `schema.prisma` file directly).
+- Real-time data transformation nodes (e.g. a node that splits full names into first/last name).
+- Connectors to push mapping pipelines directly to Postgres, Snowflake, or Supabase.
+
+<br />
+
+---
+
+## 💻 Getting Started (For Judges / Developers)
 
 1. **Clone the repository**
 2. **Install dependencies**:
@@ -10,7 +45,7 @@ ShiftSync is a modern, AI-powered tool for intelligent data ingestion, schema ma
    npm install
    ```
 3. **Configure Environment Variables**:
-   Copy the example environment file and add your API keys:
+   Copy the example environment file and add your OpenAI API key:
    ```bash
    cp .env.example .env.local
    ```
@@ -22,16 +57,3 @@ ShiftSync is a modern, AI-powered tool for intelligent data ingestion, schema ma
    ```
 
 5. **Open your browser** to [http://localhost:3000](http://localhost:3000)
-
-## Features
-- **AI-Powered Mapping**: Automatically matches CSV columns to complex database schemas using GPT-4o.
-- **Visual Node Graph**: Interactive, sleek node-based visualization built with React Flow to review and edit schema links.
-- **Client-side Parsing**: Lightning fast local parsing of messy CSVs using PapaParse.
-- **Schema Validation**: Row-by-row validation using Zod.
-
-## Technology Stack
-- Next.js 15 (App Router)
-- React 19 + Framer Motion
-- Tailwind CSS (v4)
-- React Flow (for node graphs)
-- OpenAI SDK
