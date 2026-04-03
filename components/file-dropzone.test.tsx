@@ -94,6 +94,21 @@ describe("FileDropzone", () => {
     expect(screen.getByText("Drag & drop your CSV file here")).toBeInTheDocument();
   });
 
+  it("shows default error when parseFile fails with non-Error", async () => {
+    (parseFile as jest.Mock).mockRejectedValueOnce("Just a string error");
+
+    render(<FileDropzone onFileParsed={mockOnFileParsed} />);
+    
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const file = createFile();
+    
+    fireEvent.change(input, { target: { files: [file] } });
+
+    await waitFor(() => {
+      expect(screen.getByText("Failed to parse file")).toBeInTheDocument();
+    });
+  });
+
   it("allows clearing the file after successful parse", async () => {
     const mockParsedData = {
       fileName: "test.csv",
@@ -164,5 +179,39 @@ describe("FileDropzone", () => {
     const dropzone = container.querySelector(".dropzone-idle, .dropzone-active") as HTMLElement;
     expect(dropzone.className).toContain("pointer-events-none");
     expect(dropzone.className).toContain("opacity-60");
+  });
+
+  it("does not trigger input click if fileName is set", async () => {
+    const mockParsedData = {
+      fileName: "test.csv",
+      totalRows: 1,
+      headers: ["col1"],
+      rows: [["val1"]],
+    };
+    (parseFile as jest.Mock).mockResolvedValueOnce(mockParsedData);
+
+    const { container } = render(<FileDropzone onFileParsed={mockOnFileParsed} />);
+
+    // Mock input click
+    const clickSpy = jest.spyOn(HTMLInputElement.prototype, "click");
+    
+    // Simulate initial drop
+    const dropzone = container.querySelector(".dropzone-idle") as HTMLElement;
+    const file = createFile();
+    fireEvent.drop(dropzone, {
+      dataTransfer: { files: [file] },
+    });
+    
+    await waitFor(() => {
+      expect(screen.getByText("test.csv")).toBeInTheDocument();
+    });
+    
+    clickSpy.mockClear();
+
+    // Now click the dropzone again
+    fireEvent.click(dropzone);
+    
+    // Should NOT have called click because fileName is set
+    expect(clickSpy).not.toHaveBeenCalled();
   });
 });

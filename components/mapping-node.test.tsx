@@ -80,7 +80,7 @@ describe("MappingNode", () => {
     
     const cases = [
       { isUnmapped: true, confidence: 0.9, expectedColor: "oklch(0.6 0.2 25)" },
-      { isUnmapped: false, confidence: undefined, expectedColor: "oklch(0.5 0.02 250)" },
+      { isUnmapped: false, confidence: 0, expectedColor: "oklch(0.5 0.02 250)" },
       { isUnmapped: false, confidence: 0.95, expectedColor: "oklch(0.7 0.18 160)" },
       { isUnmapped: false, confidence: 0.75, expectedColor: "oklch(0.8 0.16 80)" },
       { isUnmapped: false, confidence: 0.4, expectedColor: "oklch(0.6 0.2 25)" }

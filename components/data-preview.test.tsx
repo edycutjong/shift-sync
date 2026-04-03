@@ -49,6 +49,18 @@ describe("DataPreview", () => {
     expect(emptyCells).toHaveLength(2);
   });
 
+  it("handles default maxRows correctly", () => {
+    // Should default to 10 rows
+    const dataWithMoreKeys = {
+      ...baseData,
+      totalRows: 15,
+      rows: Array(15).fill(["1", "2", "3"])
+    };
+    render(<DataPreview data={dataWithMoreKeys} />);
+    const rows = screen.getAllByRole("row");
+    expect(rows.length).toBeLessThanOrEqual(11); // 1 header + 10 data rows
+  });
+
   it("paginates correctly when totalRows > maxRows", () => {
     const manyRowsData = {
       ...baseData,
