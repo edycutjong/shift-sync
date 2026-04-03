@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   ReactFlow,
@@ -26,6 +26,22 @@ const edgeTypes = { confidence: ConfidenceEdge };
 
 function MappingGraphInner({ mapping, sourceHeaders }: MappingGraphProps) {
   const { fitView } = useReactFlow();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(() => {
+      // Small delay prevents extreme jittering during continuous resize
+      window.requestAnimationFrame(() => {
+        fitView({ padding: 0.15, duration: 300, maxZoom: 1 });
+      });
+    });
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [fitView]);
 
   const { nodes, edges } = useMemo(() => {
     const mappedSourceCols = new Set(mapping.mappings.map((m) => m.source));
@@ -81,6 +97,7 @@ function MappingGraphInner({ mapping, sourceHeaders }: MappingGraphProps) {
 
   return (
     <motion.div
+      ref={containerRef}
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}

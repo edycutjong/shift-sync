@@ -28,6 +28,23 @@ Data ingestion is notoriously difficult. Every client, vendor, and department se
 ShiftSync allows anyone to drag and drop a messy CSV file, parses the data instantly inside their browser, and then uses OpenAI (GPT-4o) to automatically map the disorganized CSV headers to a strict target database schema. 
 Any ambiguous or unmapped columns are sent to an interactive mapping graph built with React Flow, allowing developers to visually debug and manually re-map columns before ingestion. It includes robust row validation to discard corrupt data effortlessly.
 
+## 📸 See it in Action
+
+<div align="center">
+  <img src="./docs/04_mapping.png" width="100%" alt="AI Mapping Graph" style="margin-bottom: 2%" />
+</div>
+
+<details>
+<summary><b>View More Screenshots</b></summary>
+<br/>
+<div align="center">
+  <img src="./docs/01_landing.png" width="48%" alt="Landing Page" style="margin-bottom: 2%" />
+  <img src="./docs/02_upload.png" width="48%" alt="CSV Upload" style="margin-bottom: 2%" />
+  <img src="./docs/03_preview.png" width="48%" alt="Data Preview" style="margin-bottom: 2%" />
+  <img src="./docs/05_success.png" width="48%" alt="Success Screen" style="margin-bottom: 2%" />
+</div>
+</details>
+
 ## 🛠 How we built it
 - **Framework:** Next.js 15 (App Router)
 - **Styling & UI:** Tailwind CSS (v4), Framer Motion, and custom glassmorphism components
