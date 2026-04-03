@@ -77,8 +77,25 @@ jest.mock("@/lib/schemas", () => ({
 }));
 
 describe("MappingGraph", () => {
+  let resizeCallback: (() => void) | null = null;
+  const originalRAF = window.requestAnimationFrame;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    resizeCallback = null;
+    // Mock ResizeObserver to capture the callback
+    (window as any).ResizeObserver = class {
+      constructor(cb: () => void) { resizeCallback = cb; }
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    };
+    // Make rAF synchronous so the fitView call inside executes immediately
+    window.requestAnimationFrame = (cb: FrameRequestCallback) => { cb(0); return 0; };
+  });
+
+  afterEach(() => {
+    window.requestAnimationFrame = originalRAF;
   });
 
   const sourceHeaders = ["firstName", "lastName", "age_header", "email_address", "unmapped_source"];
@@ -140,5 +157,18 @@ describe("MappingGraph", () => {
     fireEvent.click(resetBtn);
 
     expect(mockFitView).toHaveBeenCalledWith({ padding: 0.15, duration: 800, maxZoom: 1 });
+  });
+
+  it("calls fitView via ResizeObserver when container resizes", () => {
+    render(<MappingGraph mapping={mapping as any} sourceHeaders={sourceHeaders} />);
+
+    // The ResizeObserver callback should have been captured during mount
+    expect(resizeCallback).not.toBeNull();
+
+    // Simulate a resize event
+    resizeCallback!();
+
+    // fitView is called once by ResizeObserver (via synchronous rAF)
+    expect(mockFitView).toHaveBeenCalledWith({ padding: 0.15, duration: 300, maxZoom: 1 });
   });
 });
