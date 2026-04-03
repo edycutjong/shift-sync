@@ -9,7 +9,7 @@
 ![React Flow](https://img.shields.io/badge/React%20Flow-UI-ff0072?style=flat&logo=react)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT%204o-412991?style=flat&logo=openai)
 ![Tailwind](https://img.shields.io/badge/Tailwind-CSS%20v4-38bdf8?style=flat&logo=tailwindcss)
-[![Deploy](https://img.shields.io/badge/▲_Live_Demo-shift--sync.vercel.app-000?style=flat&logo=vercel)](https://shift-sync-navy.vercel.app)
+[![Deploy](https://img.shields.io/badge/▲_Live_Demo-shiftsync.edycu.dev-000?style=flat&logo=vercel)](https://shiftsync.edycu.dev)
 
 </div>
 
@@ -17,7 +17,7 @@
 
 ShiftSync is a modern, AI-powered tool built to solve one of software engineering's biggest headaches: **intelligent data ingestion and schema mapping**.
 
-**🔗 [Live Demo → shift-sync-navy.vercel.app](https://shift-sync-navy.vercel.app)**
+**🔗 [Live Demo → shiftsync.edycu.dev](https://shiftsync.edycu.dev)**
 
 *Built for Hackathon Submission 2026*
 
