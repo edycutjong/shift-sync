@@ -27,3 +27,15 @@ if (typeof window !== 'undefined') {
   }
   (window as any).PointerEvent = PointerEventMock;
 }
+// Global console error mock to silence React 18 act(...) warnings
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  if (
+    typeof args[0] === 'string' &&
+    (args[0].includes('was not wrapped in act(') ||
+     args[0].includes('Warning: An update to'))
+  ) {
+    return;
+  }
+  originalConsoleError(...args);
+};

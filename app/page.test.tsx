@@ -134,17 +134,6 @@ beforeAll(() => {
   } as DOMRect));
 });
 
-const originalError = console.error;
-beforeAll(() => {
-  console.error = (...args) => {
-    if (typeof args[0] === 'string' && args[0].includes('was not wrapped in act(')) return;
-    originalError(...args);
-  };
-});
-afterAll(() => {
-  console.error = originalError;
-});
-
 describe("Home Page", () => {
   it("renders the main heading and CTA", () => {
     render(<Home />);
