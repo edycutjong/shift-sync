@@ -179,23 +179,170 @@
   background: oklch(0.18 0.02 265 / 60%);
   backdrop-filter: blur(16px);
   border: 1px solid oklch(0.3 0.03 265 / 40%);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
   background: oklch(0.2 0.025 265 / 70%);
   border-color: oklch(0.4 0.05 250 / 50%);
+  box-shadow:
+    0 8px 32px oklch(0.65 0.2 250 / 8%),
+    0 0 0 1px oklch(0.4 0.06 250 / 20%);
+}
+
+/* Animated gradient border — rotating conic on hover */
+@property --border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.animated-border-glow {
+  background: conic-gradient(
+    from var(--border-angle),
+    oklch(0.65 0.2 250 / 50%),
+    oklch(0.55 0.18 285 / 30%),
+    oklch(0.7 0.18 160 / 40%),
+    oklch(0.65 0.2 250 / 50%)
+  );
+  animation: border-spin 4s linear infinite;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  padding: 1px;
+}
+
+@keyframes border-spin {
+  to { --border-angle: 360deg; }
+}
+
+/* CTA button — shimmer sweep + glow pulse */
+.cta-shimmer {
+  position: relative;
+  overflow: hidden;
+  animation: cta-glow-pulse 3s ease-in-out infinite;
+}
+
+.cta-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    oklch(1 0 0 / 18%) 42%,
+    oklch(1 0 0 / 25%) 50%,
+    oklch(1 0 0 / 18%) 58%,
+    transparent 65%
+  );
+  translate: -100% 0;
+  animation: shimmer-sweep 3s ease-in-out infinite;
+}
+
+@keyframes shimmer-sweep {
+  0%, 70% { translate: -100% 0; }
+  100%    { translate: 100% 0; }
+}
+
+@keyframes cta-glow-pulse {
+  0%, 100% { box-shadow: 0 0 30px oklch(0.65 0.2 250 / 25%); }
+  50%      { box-shadow: 0 0 48px oklch(0.65 0.2 250 / 40%), 0 0 80px oklch(0.65 0.2 250 / 15%); }
 }
 
 /* Dropzone */
 .dropzone-idle {
   border: 2px dashed oklch(0.35 0.03 265);
-  transition: all 0.3s ease;
+  background: oklch(0.12 0.015 265 / 40%);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dropzone-idle:hover {
+  border-color: oklch(0.5 0.1 250);
+  background: oklch(0.14 0.02 265 / 60%);
+  box-shadow: 0 0 60px oklch(0.65 0.2 250 / 8%), inset 0 1px 0 oklch(1 0 0 / 3%);
+  transform: translateY(-2px);
 }
 
 .dropzone-active {
   border: 2px dashed oklch(0.65 0.2 250);
   background: oklch(0.65 0.2 250 / 5%);
-  box-shadow: 0 0 40px oklch(0.65 0.2 250 / 10%);
+  box-shadow: 0 0 60px oklch(0.65 0.2 250 / 15%), inset 0 0 80px oklch(0.65 0.2 250 / 3%);
+}
+
+/* Scanning line effect for dropzone */
+@keyframes scan-line {
+  0% { top: -2px; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: calc(100% + 2px); opacity: 0; }
+}
+
+.dropzone-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, oklch(0.65 0.2 250 / 60%), transparent);
+  animation: scan-line 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Floating data particles */
+@keyframes float-particle {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+  25% { transform: translateY(-20px) rotate(90deg); opacity: 0.6; }
+  50% { transform: translateY(-10px) rotate(180deg); opacity: 0.4; }
+  75% { transform: translateY(-25px) rotate(270deg); opacity: 0.5; }
+}
+
+.data-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 1px;
+  background: oklch(0.65 0.2 250 / 30%);
+  animation: float-particle var(--duration, 4s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+/* Feature info card */
+.feature-card {
+  background: oklch(0.14 0.018 265 / 50%);
+  border: 1px solid oklch(0.25 0.02 265 / 40%);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, oklch(0.65 0.2 250 / 4%), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.feature-card:hover {
+  border-color: oklch(0.4 0.08 250 / 50%);
+  background: oklch(0.16 0.02 265 / 60%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px oklch(0.65 0.2 250 / 6%);
+}
+
+.feature-card:hover::before {
+  opacity: 1;
+}
+
+/* Step indicator labels */
+@keyframes step-glow {
+  0%, 100% { box-shadow: 0 0 6px oklch(0.65 0.2 250 / 30%); }
+  50% { box-shadow: 0 0 12px oklch(0.65 0.2 250 / 60%); }
+}
+
+.step-active {
+  animation: step-glow 2s ease-in-out infinite;
 }
 
 /* React Flow overrides */
