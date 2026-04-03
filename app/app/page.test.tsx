@@ -213,6 +213,7 @@ describe("AppPage", () => {
     global.URL.createObjectURL = mockCreateObjectURL;
     global.URL.revokeObjectURL = mockRevokeObjectURL;
     const mockClick = jest.spyOn(window.HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     // Mock localStorage to throw error
     const originalSetItem = Storage.prototype.setItem;
@@ -253,6 +254,7 @@ describe("AppPage", () => {
     expect(mockCreateObjectURL).toHaveBeenCalled();
     expect(mockClick).toHaveBeenCalled();
     mockClick.mockRestore();
+    consoleSpy.mockRestore();
 
     // Restore setItem
     Storage.prototype.setItem = originalSetItem;
