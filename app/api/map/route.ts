@@ -3,10 +3,6 @@ import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { MappingResponseSchema, targetSchema } from "@/lib/schemas";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req: Request) {
   try {
     const { headers, sampleRows } = await req.json();
@@ -19,6 +15,10 @@ export async function POST(req: Request) {
       console.warn("No OPENAI_API_KEY found, falling back to client-side demo data.");
       return NextResponse.json({ error: "No API Key" }, { status: 500 });
     }
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
 
     const completion = await openai.chat.completions.parse({
       model: "gpt-4o-2024-08-06",
