@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import type { ParsedData, ValidationResult } from "@/lib/schemas";
 
@@ -13,7 +15,14 @@ interface DataPreviewProps {
 }
 
 export function DataPreview({ data, validation, maxRows = 10 }: DataPreviewProps) {
-  const displayRows = data.rows.slice(0, maxRows);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = maxRows;
+  const totalPages = Math.ceil(data.totalRows / itemsPerPage);
+
+  const displayRows = data.rows.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Build a set of invalid row indices for highlighting
   const invalidRowIndices = new Set(
@@ -41,9 +50,10 @@ export function DataPreview({ data, validation, maxRows = 10 }: DataPreviewProps
             {data.totalRows.toLocaleString()} rows
           </Badge>
         </div>
-        {maxRows < data.totalRows && (
+        {totalPages > 1 && (
           <span className="text-xs text-muted-foreground">
-            Showing first {maxRows} rows
+            Showing {(currentPage - 1) * itemsPerPage + 1}-
+            {Math.min(currentPage * itemsPerPage, data.totalRows)} of {data.totalRows}
           </span>
         )}
       </div>
@@ -117,6 +127,37 @@ export function DataPreview({ data, validation, maxRows = 10 }: DataPreviewProps
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-end gap-4 mt-3">
+          <span className="text-xs text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="h-8"
+            >
+              <ChevronLeft className="w-4 h-4 mr-1" />
+              Prev
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="h-8"
+            >
+              Next
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }
