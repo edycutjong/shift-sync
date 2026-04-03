@@ -1,23 +1,70 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#4F46E5" />
-      <stop offset="100%" stop-color="#7C3AED" />
+    <!-- Background Gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0b" />
+      <stop offset="50%" stop-color="#141122" />
+      <stop offset="100%" stop-color="#050505" />
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="15" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+
+    <!-- Source Gradient (Warm/Messy) -->
+    <linearGradient id="sourceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ec4899" />
+      <stop offset="100%" stop-color="#f43f5e" />
+    </linearGradient>
+
+    <!-- Target Gradient (Structured/Cool) -->
+    <linearGradient id="targetGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </linearGradient>
+
+    <!-- Map Glow -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="lightGlow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
     </filter>
   </defs>
-  <rect width="512" height="512" rx="100" fill="url(#bg-grad)"/>
+
+  <!-- Base App Icon Outline -->
+  <rect width="512" height="512" fill="url(#bg)"/>
   
-  <g filter="url(#glow)">
-    <!-- Right side node -->
-    <rect x="300" y="216" width="80" height="80" rx="20" fill="none" stroke="#FFFFFF" stroke-width="32"/>
-    <!-- Left side node -->
-    <rect x="132" y="216" width="80" height="80" rx="20" fill="none" stroke="#FFFFFF" stroke-width="32"/>
-    <!-- Connecting line with an arrow inside -->
-    <path d="M 172 256 L 340 256" stroke="#FFFFFF" stroke-width="32" stroke-linecap="round"/>
-    <path d="M 280 196 L 340 256 L 280 316" fill="none" stroke="#FFFFFF" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="256" cy="256" r="140" fill="#8b5cf6" opacity="0.15" filter="blur(30px)" />
+
+  <g transform="translate(0, 0)">
+    <!-- Right side: Structured Target Schema -->
+    <rect x="340" y="100" width="80" height="80" rx="20" fill="none" stroke="url(#targetGrad)" stroke-width="12" filter="url(#glow)"/>
+    <rect x="340" y="216" width="80" height="80" rx="20" fill="url(#targetGrad)" filter="url(#glow)"/>
+    <rect x="340" y="332" width="80" height="80" rx="20" fill="none" stroke="url(#targetGrad)" stroke-width="12" filter="url(#glow)"/>
+
+    <!-- Left side: Disorganized Source Data -->
+    <circle cx="132" cy="140" r="36" fill="url(#sourceGrad)" filter="url(#glow)"/>
+    
+    <polygon points="132,216 96,286 168,286" fill="none" stroke="url(#sourceGrad)" stroke-width="12" filter="url(#glow)"/>
+    
+    <rect x="96" y="338" width="72" height="72" rx="12" fill="url(#sourceGrad)" filter="url(#glow)"/>
+
+    <!-- False/Messy connections (Faint, solid) -->
+    <path d="M 168 140 C 230 140, 270 256, 330 256" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.2" fill="none" />
+    <path d="M 168 374 C 230 374, 270 256, 330 256" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.2" fill="none" />
+
+    <!-- True AI Synced connections (Bright, dashed) -->
+    <path d="M 168 140 L 330 140" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.9" fill="none" stroke-dasharray="10 12" filter="url(#lightGlow)"/>
+    <path d="M 172 256 L 330 256" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.9" fill="none" stroke-dasharray="10 12" filter="url(#lightGlow)"/>
+    <path d="M 168 374 L 330 374" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.9" fill="none" stroke-dasharray="10 12" filter="url(#lightGlow)"/>
+
+    <!-- AI Sparkles / Intelligence nodes bridging the gap -->
+    <!-- Middle mapping spark -->
+    <polygon points="256,236 264,256 284,264 264,272 256,292 248,272 228,264 248,256" fill="#ffffff" filter="url(#glow)"/>
   </g>
 </svg>
