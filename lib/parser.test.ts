@@ -94,5 +94,18 @@ describe('parser', () => {
       expect(res.sampleRows.length).toBe(2);
       expect(res.sampleRows).toEqual([['1'], ['2']]);
     });
+
+    it('extracts sample data correctly with default size', () => {
+      const parsed = {
+        headers: ['a'],
+        rows: [['1'], ['2'], ['3'], ['4'], ['5'], ['6']],
+        totalRows: 6,
+        fileName: 'a.csv'
+      };
+      
+      const res = extractSampleData(parsed);
+      expect(res.headers).toEqual(['a']);
+      expect(res.sampleRows.length).toBe(5);
+    });
   });
 });
