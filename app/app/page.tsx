@@ -453,10 +453,28 @@ export default function AppPage() {
               </div>
 
               {/* Dropzone */}
-              <FileDropzone
-                onFileParsed={handleFileParsed}
-                isLoading={isMapping}
-              />
+              <div className="flex flex-col items-center gap-4 w-full">
+                <div className="w-full">
+                  <FileDropzone
+                    onFileParsed={handleFileParsed}
+                    isLoading={isMapping}
+                  />
+                </div>
+                
+                {!parsedData && (
+                  <motion.a 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    href="/data/sample_messy_clients.csv" 
+                    download
+                    className="inline-flex z-10 items-center gap-1.5 px-4 py-1.5 rounded-full bg-[oklch(0.65_0.2_250/10%)] text-[oklch(0.65_0.2_250)] text-xs font-bold hover:bg-[oklch(0.65_0.2_250/20%)] transition-all border border-[oklch(0.65_0.2_250/30%)] shadow-sm hover:shadow-[0_0_15px_oklch(0.65_0.2_250/30%)] cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    Download messy sample CSV
+                  </motion.a>
+                )}
+              </div>
 
               {/* Test cases or parsed data */}
               {!parsedData ? (
