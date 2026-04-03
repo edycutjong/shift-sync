@@ -137,6 +137,7 @@ describe("AppPage", () => {
   });
 
   it("handles edge case: API failure (res.ok is false), falls back, then user clicks Start Over", async () => {
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<AppPage />);
 
     const messyBtn = screen.getByText("Messy Headers").closest("button")!;
@@ -163,9 +164,11 @@ describe("AppPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Upload Your")).toBeInTheDocument();
     });
+    consoleSpy.mockRestore();
   });
 
   it("handles exception during fetch", async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     render(<AppPage />);
 
     const edgeBtn = screen.getByText("Edge Case").closest("button")!;
@@ -183,6 +186,7 @@ describe("AppPage", () => {
     await waitFor(() => {
       expect(screen.getByText("AI Schema Mapping")).toBeInTheDocument();
     }, { timeout: 3000 });
+    consoleSpy.mockRestore();
   });
 
   it("handles Large Data and forces a warning via applyTransforms", async () => {

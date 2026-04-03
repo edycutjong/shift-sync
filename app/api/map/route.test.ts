@@ -66,6 +66,7 @@ describe("POST /api/map", () => {
 
   it("returns 500 if OPENAI_API_KEY is not set", async () => {
     delete process.env.OPENAI_API_KEY;
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     const req = createMockRequest({
       headers: ["name"],
       sampleRows: [["John"]],
@@ -78,6 +79,7 @@ describe("POST /api/map", () => {
 
     expect(res.status).toBe(500);
     expect(json.error).toBe("No API Key");
+    consoleSpy.mockRestore();
   });
 
   it("successfully returns parsed mapping if API key exists", async () => {
@@ -128,6 +130,7 @@ describe("POST /api/map", () => {
     process.env.OPENAI_API_KEY = "test-key";
     
     mockParse.mockRejectedValueOnce(new Error("API limits exceeded"));
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     const req = createMockRequest({
       headers: ["name"],
@@ -139,5 +142,6 @@ describe("POST /api/map", () => {
 
     expect(res.status).toBe(500);
     expect(json.error).toBe("Failed to generate mapping");
+    consoleSpy.mockRestore();
   });
 });
