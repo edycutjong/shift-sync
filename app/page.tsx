@@ -159,14 +159,6 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
           {feature.description}
         </p>
 
-        {/* Bottom hover indicator */}
-        <motion.div
-          className="mt-4 flex items-center gap-1.5 text-xs font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0"
-          style={{ color: accent }}
-        >
-          <span>Learn more</span>
-          <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-        </motion.div>
       </div>
     </motion.div>
   );
