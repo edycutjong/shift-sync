@@ -5,30 +5,47 @@
 <div align="center">
 
 [![CI Status](https://github.com/edycutjong/shift-sync/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/shift-sync/actions)
-![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)
-![React Flow](https://img.shields.io/badge/React%20Flow-UI-ff0072?style=flat&logo=react)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)
+![React](https://img.shields.io/badge/React-19-61dafb?style=flat&logo=react)
+![React Flow](https://img.shields.io/badge/@xyflow/react-12-ff0072?style=flat&logo=react)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT%204o-412991?style=flat&logo=openai)
 ![Tailwind](https://img.shields.io/badge/Tailwind-CSS%20v4-38bdf8?style=flat&logo=tailwindcss)
+![Zod](https://img.shields.io/badge/Zod-4-3068b7?style=flat&logo=zod)
 [![Deploy](https://img.shields.io/badge/▲_Live_Demo-shiftsync.edycu.dev-000?style=flat&logo=vercel)](https://shiftsync.edycu.dev)
+[![Devpost](https://img.shields.io/badge/Devpost-Submission-003e54?style=flat&logo=devpost)](https://devpost.com/software/shiftsync-axomu5)
 
 </div>
 
-# 🚀 ShiftSync - The AI-Powered Data Harmonizer
+# 🚀 ShiftSync — The AI-Powered Data Harmonizer
 
-ShiftSync is a modern, AI-powered tool built to solve one of software engineering's biggest headaches: **intelligent data ingestion and schema mapping**.
+ShiftSync is a modern, AI-powered tool built to solve one of software engineering's biggest headaches: **intelligent data ingestion and schema mapping**. Drop a messy CSV, let GPT-4o map your columns visually, and ingest clean data — all inside the browser.
 
 **🔗 [Live Demo → shiftsync.edycu.dev](https://shiftsync.edycu.dev)**
 
-*Built for Hackathon Submission 2026*
+*Built for [DevHouse Global Hackathon 2026](https://devhouse.devpost.com/) · [View Devpost Submission](https://devpost.com/software/shiftsync-axomu5)*
+
+---
 
 ## 💡 Inspiration
-Data ingestion is notoriously difficult. Every client, vendor, and department sends data in different formats, with different headers, and mixed data types. Developers spend hours writing fragile parsing scripts for every new data source. We wanted to automate this tedious process by combining lightning-fast drag-and-drop file parsing, an interactive node-based UX, and the intelligence of Large Language Models to handle schema mapping instantly. 
 
-## ⚙️ What it does
-ShiftSync allows anyone to drag and drop a messy CSV file, parses the data instantly inside their browser, and then uses OpenAI (GPT-4o) to automatically map the disorganized CSV headers to a strict target database schema. 
-Any ambiguous or unmapped columns are sent to an interactive mapping graph built with React Flow, allowing developers to visually debug and manually re-map columns before ingestion. It includes robust row validation to discard corrupt data effortlessly.
+Data ingestion is notoriously difficult. Every client, vendor, and department sends data in different formats — with different headers, mixed data types, and inconsistent conventions. Developers spend hours writing fragile parsing scripts for every new data source.
 
-## 📸 See it in Action
+We wanted to automate this tedious process by combining **lightning-fast drag-and-drop file parsing**, an **interactive node-based UX**, and the intelligence of **Large Language Models** to handle schema mapping instantly.
+
+## ⚙️ What It Does
+
+ShiftSync allows anyone to:
+
+1. **Drag & drop** a messy CSV file into the widget
+2. **Parse** the data instantly — entirely client-side (your data never leaves the browser)
+3. **AI maps columns** using OpenAI GPT-4o Structured Outputs to automatically match disorganized CSV headers to a strict target CRM schema with confidence scores
+4. **Visually review** the mapping through an interactive React Flow graph — drag to re-map, hover for details
+5. **Validate & transform** every row (email validation, date parsing, whitespace trimming, casing normalization)
+6. **Approve & ingest** — clean data flows into your database with a full HTML audit report
+
+Any ambiguous or unmapped columns are highlighted in the interactive mapping graph, allowing developers to visually debug and manually re-map columns before ingestion. Corrupt rows are flagged with detailed error messages.
+
+## 📸 See It in Action
 
 <div align="center">
   <img src="./docs/04_mapping.png" width="100%" alt="AI Mapping Graph" style="margin-bottom: 2%" />
@@ -45,27 +62,87 @@ Any ambiguous or unmapped columns are sent to an interactive mapping graph built
 </div>
 </details>
 
-## 🛠 How we built it
-- **Framework:** Next.js 15 (App Router)
-- **Styling & UI:** Tailwind CSS (v4), Framer Motion, and custom glassmorphism components
-- **AI Integration:** OpenAI API (`gpt-4o-2024-08-06`) leveraging Structured Outputs (Zod) for deterministic mapping
-- **Graph Visualization:** React Flow 
-- **Parsing & Validation:** PapaParse (client-side chunked parsing) and Zod (schema validation)
+---
 
-## 🤕 Challenges we ran into
-- Building a responsive node-graph where visual elements adapt perfectly alongside fluid flexbox layouts.
-- Structuring LLM prompts to consistently return deterministic schema mappings instead of conversational text.
-- Managing client-side parsing without blocking the main event thread, ensuring the glowing animations remain buttery smooth.
+## 🛠 Tech Stack
 
-## 🏆 Accomplishments that we're proud of
-- The seamless, highly aesthetic "glassmorphism" UI which integrates incredibly complex React Flow nodes into a seamless user experience.
-- Moving the burden of schema matching from manual regex and scripting to instantaneous AI matching.
-- Achieving a completely serverless architecture that doesn't store sensitive PII user data anywhere during the mapping process.
+| Layer | Technology | Version |
+|---|---|---|
+| **Framework** | Next.js (App Router, Turbopack) | 16.2 |
+| **UI Library** | React | 19.2 |
+| **Styling** | Tailwind CSS + Framer Motion | v4 / 12.x |
+| **Graph Visualization** | @xyflow/react (React Flow) | 12.x |
+| **AI Integration** | OpenAI API (GPT-4o Structured Outputs) | 6.x |
+| **Schema Validation** | Zod | 4.x |
+| **CSV Parsing** | PapaParse (client-side chunked) | 5.x |
+| **Component Library** | shadcn/ui + Lucide Icons | — |
+| **Testing** | Jest + React Testing Library | 30.x |
+| **Deployment** | Vercel | — |
 
-## 🚀 What's next for ShiftSync
-- Supporting custom target schemas input by users (e.g. uploading a `schema.prisma` file directly).
-- Real-time data transformation nodes (e.g. a node that splits full names into first/last name).
-- Connectors to push mapping pipelines directly to Postgres, Snowflake, or Supabase.
+## 🏗 Project Architecture
+
+```
+shiftsync/
+├── app/
+│   ├── page.tsx              # Landing page — animated hero + feature cards
+│   ├── layout.tsx            # Root layout, fonts, metadata
+│   ├── globals.css           # Design system — glassmorphism, gradients, orbs
+│   ├── api/
+│   │   └── map/route.ts      # POST /api/map — OpenAI Structured Outputs endpoint
+│   └── app/
+│       ├── page.tsx           # Main app — Upload → Map → Approve → Ingest flow
+│       └── history/           # Ingestion history (localStorage)
+├── components/
+│   ├── file-dropzone.tsx      # Drag-and-drop CSV uploader
+│   ├── data-preview.tsx       # Paginated data table with validation highlights
+│   ├── mapping-graph.tsx      # React Flow interactive node graph
+│   ├── mapping-node.tsx       # Custom source/target graph nodes
+│   ├── mapping-edge.tsx       # Animated confidence-colored edges
+│   ├── mapping-summary.tsx    # Sidebar stats — matched, unmapped, missing
+│   └── ui/                    # shadcn/ui primitives (Button, Card, Dialog, etc.)
+├── lib/
+│   ├── schemas.ts             # Target CRM schema + Zod validation schemas
+│   ├── parser.ts              # PapaParse wrapper with row padding for ragged CSVs
+│   ├── transformer.ts         # Column transforms (trim, lowercase, parse_date, etc.)
+│   ├── validator.ts           # Row-level validation against target schema
+│   └── utils.ts               # cn() utility
+├── scripts/
+│   ├── demo.mjs               # Playwright automated demo recorder (screenshots + video)
+│   └── test-data.csv          # Sample messy CSV for demo
+├── docs/                      # Screenshots and banner assets
+├── public/                    # Static assets + sample CSV download
+└── .github/workflows/ci.yml   # CI: lint → typecheck → test:coverage
+```
+
+### Key Design Decisions
+
+- **Serverless architecture** — No PII data stored. Everything runs client-side except the single AI mapping API call.
+- **Graceful AI fallback** — If `OPENAI_API_KEY` is missing, the app uses hardcoded demo mappings. The full UX (upload, graph, validation, export) works perfectly without an API key.
+- **Structured Outputs** — Using `zodResponseFormat` with the OpenAI SDK guarantees deterministic, type-safe JSON responses from GPT-4o. No prompt-engineering fragility.
+- **100% test coverage** — Every component, utility, and API route is covered by Jest + React Testing Library.
+
+---
+
+## 🤕 Challenges We Ran Into
+
+- **Responsive node-graph layout** — Building a React Flow graph where visual elements adapt perfectly alongside fluid flexbox layouts, with auto-fit on container resize.
+- **Deterministic LLM outputs** — Structuring LLM prompts to consistently return schema mappings instead of conversational text. Solved with Zod-based Structured Outputs.
+- **Non-blocking parsing** — Managing client-side CSV parsing (including 1,500+ row datasets with sparse/ragged rows) without blocking the main thread while keeping glassmorphism animations buttery smooth.
+
+## 🏆 Accomplishments We're Proud Of
+
+- A seamless **glassmorphism UI** with animated gradient orbs, 3D tilt hover cards, and mouse-follow spotlights — integrating complex React Flow nodes into a truly premium experience.
+- Moving the burden of schema matching **from manual regex/scripting to instantaneous AI matching** with confidence scores.
+- Achieving a **completely serverless, privacy-first architecture** — no sensitive data is stored anywhere during the mapping process.
+- **4 built-in test cases** (Clean, Messy Headers, Edge Case, Large Data) that showcase the engine's resilience without needing your own CSV file.
+- A downloadable **HTML Ingestion Report** with full mapping rules, validation audit, and error breakdowns.
+
+## 🚀 What's Next for ShiftSync
+
+- Supporting **custom target schemas** input by users (e.g. uploading a `schema.prisma` or DDL file directly)
+- **Real-time transformation nodes** — visual pipeline nodes that split full names, merge columns, or reformat dates
+- **Database connectors** to push mapping pipelines directly to Postgres, Snowflake, or Supabase
+- **Multi-file ingestion** — batch process multiple CSVs with shared schema rules
 
 <br />
 
@@ -73,24 +150,55 @@ Any ambiguous or unmapped columns are sent to an interactive mapping graph built
 
 ## 💻 Getting Started (For Judges / Developers)
 
+### Prerequisites
+
+- Node.js ≥ 18
+- npm ≥ 9
+
+### Setup
+
 1. **Clone the repository**
-2. **Install dependencies**:
+   ```bash
+   git clone https://github.com/edycutjong/shift-sync.git
+   cd shift-sync
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
-3. **Configure Environment Variables**:
-   Copy the example environment file and add your OpenAI API key:
+
+3. **Configure environment** (optional)
    ```bash
    cp .env.example .env.local
    ```
-   *You'll need an OpenAI API key (`OPENAI_API_KEY`) for the AI mapping feature to work properly. If it is omitted, the app will gracefully fall back to a hardcoded demo response.*
+   > **Note:** The `OPENAI_API_KEY` is **optional**. Without it, the app runs in demo mode with built-in mapping rules. Everything works — upload, visual graph, validation, and export.
 
-4. **Run the development server**:
+4. **Run the development server**
    ```bash
    npm run dev
    ```
 
-5. **Open your browser** to [http://localhost:3000](http://localhost:3000)
+5. **Open your browser** at [http://localhost:3000](http://localhost:3000)
 
-## License
+### Available Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start Next.js dev server (Turbopack) |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint check |
+| `npm run typecheck` | TypeScript type checking |
+| `npm run test` | Run Jest tests |
+| `npm run test:coverage` | Run tests with coverage report |
+| `npm run ci` | Full CI pipeline: lint → typecheck → test:coverage |
+
+---
+
+## 👤 Author
+
+**Edy Cu Tjong** — [GitHub](https://github.com/edycutjong)
+
+## 📄 License
+
 This project is open-source and available under the [MIT License](LICENSE).
