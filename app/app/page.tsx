@@ -3,11 +3,17 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  TriangleAlert,
   ArrowLeft,
   CheckCircle2,
   Loader2,
   Sparkles,
   RotateCcw,
+  Brain,
+  ShieldCheck,
+  FileOutput,
+  Upload as UploadIcon,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -28,11 +34,41 @@ import { parseFile } from "@/lib/parser";
 
 type AppState = "upload" | "mapping" | "success";
 
+const stateLabels: Record<AppState, string> = {
+  upload: "Upload",
+  mapping: "Map",
+  success: "Done",
+};
+
 const pageVariants = {
   enter: { opacity: 0, x: 40 },
   center: { opacity: 1, x: 0 },
   exit: { opacity: 0, x: -40 },
 };
+
+const featureCards = [
+  {
+    icon: Brain,
+    title: "AI Column Mapping",
+    description: "Gemini analyzes headers and sample rows to intelligently match source columns to your target schema.",
+    color: "oklch(0.72 0.18 250)",
+    bgColor: "oklch(0.65 0.2 250 / 10%)",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Schema Validation",
+    description: "Every row is validated against required fields, data types, and format rules before ingestion.",
+    color: "oklch(0.7 0.18 160)",
+    bgColor: "oklch(0.7 0.18 160 / 10%)",
+  },
+  {
+    icon: FileOutput,
+    title: "Clean Output",
+    description: "Normalized dates, trimmed whitespace, proper casing — your data arrives production-ready.",
+    color: "oklch(0.55 0.18 285)",
+    bgColor: "oklch(0.55 0.18 285 / 10%)",
+  },
+];
 
 export default function AppPage() {
   const [state, setState] = useState<AppState>("upload");
@@ -70,7 +106,6 @@ export default function AppPage() {
       } else {
         // Fallback to hardcoded mapping for demo reliability
         console.warn("API failed, using fallback mapping");
-        // Simulate a brief delay for demo feel
         await new Promise((r) => setTimeout(r, 1500));
         mappingResult = fallbackMapping;
       }
@@ -99,7 +134,6 @@ export default function AppPage() {
       setState("mapping");
     } catch (err) {
       console.error(err);
-      // Final fallback
       await new Promise((r) => setTimeout(r, 1000));
       setMapping(fallbackMapping);
 
@@ -130,17 +164,21 @@ export default function AppPage() {
     setState("upload");
   }, []);
 
+  const states: AppState[] = ["upload", "mapping", "success"];
+  const currentIdx = states.indexOf(state);
+
   return (
     <div className="relative min-h-screen bg-[oklch(0.09_0.015_265)]">
-      {/* Subtle background */}
+      {/* Background ambient glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[200px] -right-[200px] w-[500px] h-[500px] rounded-full bg-[oklch(0.45_0.2_250/6%)] blur-[100px]" />
-        <div className="absolute -bottom-[200px] -left-[200px] w-[400px] h-[400px] rounded-full bg-[oklch(0.45_0.18_285/5%)] blur-[100px]" />
+        <div className="absolute -top-[200px] -right-[200px] w-[600px] h-[600px] rounded-full bg-[oklch(0.45_0.2_250/6%)] blur-[120px] orb-1" />
+        <div className="absolute -bottom-[200px] -left-[200px] w-[500px] h-[500px] rounded-full bg-[oklch(0.45_0.18_285/5%)] blur-[120px] orb-2" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-[oklch(0.5_0.15_200/3%)] blur-[100px] orb-3" />
       </div>
 
       {/* Header */}
       <header className="relative z-10 border-b border-border/50 bg-[oklch(0.1_0.015_265/80%)] backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
@@ -152,21 +190,40 @@ export default function AppPage() {
             <h1 className="text-sm font-semibold gradient-text">ShiftSync</h1>
           </div>
 
-          {/* Step indicator */}
-          <div className="flex items-center gap-2">
-            {(["upload", "mapping", "success"] as AppState[]).map((s, i) => (
-              <div key={s} className="flex items-center gap-2">
-                <div
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    state === s
-                      ? "bg-[oklch(0.65_0.2_250)] shadow-[0_0_8px_oklch(0.65_0.2_250/40%)]"
-                      : i < ["upload", "mapping", "success"].indexOf(state)
-                      ? "bg-[oklch(0.7_0.18_160)]"
-                      : "bg-border"
-                  }`}
-                />
+          {/* Step indicator with labels */}
+          <div className="flex items-center gap-1">
+            {states.map((s, i) => (
+              <div key={s} className="flex items-center">
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold transition-all duration-300 ${
+                      i < currentIdx
+                        ? "bg-[oklch(0.7_0.18_160)] text-white"
+                        : i === currentIdx
+                        ? "bg-[oklch(0.65_0.2_250)] text-white step-active"
+                        : "bg-[oklch(0.2_0.015_265)] text-muted-foreground border border-border/50"
+                    }`}
+                  >
+                    {i < currentIdx ? "✓" : i + 1}
+                  </div>
+                  <span
+                    className={`text-xs font-medium transition-colors ${
+                      i === currentIdx
+                        ? "text-foreground"
+                        : i < currentIdx
+                        ? "text-[oklch(0.7_0.18_160)]"
+                        : "text-muted-foreground/50"
+                    }`}
+                  >
+                    {stateLabels[s]}
+                  </span>
+                </div>
                 {i < 2 && (
-                  <div className="w-6 h-px bg-border" />
+                  <div
+                    className={`w-8 h-px mx-2 transition-colors duration-300 ${
+                      i < currentIdx ? "bg-[oklch(0.7_0.18_160)]" : "bg-border/50"
+                    }`}
+                  />
                 )}
               </div>
             ))}
@@ -186,91 +243,194 @@ export default function AppPage() {
               animate="center"
               exit="exit"
               transition={{ duration: 0.3 }}
-              className="max-w-3xl mx-auto space-y-8"
+              className="max-w-3xl mx-auto space-y-10"
             >
-              <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold text-foreground">
-                  Upload Your Data
+              {/* Hero text */}
+              <div className="text-center space-y-3">
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[oklch(0.65_0.2_250/20%)] bg-[oklch(0.65_0.2_250/6%)] text-xs font-medium text-[oklch(0.72_0.18_250)] mb-2"
+                >
+                  <Zap className="w-3 h-3" />
+                  AI-Powered Schema Detection
+                </motion.div>
+                <h2 className="text-3xl font-bold text-foreground tracking-tight">
+                  Upload Your <span className="gradient-text">Data</span>
                 </h2>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground max-w-md mx-auto">
                   Drop a CSV file with client data. We&apos;ll analyze the columns and
-                  map them to your database schema.
+                  map them to your database schema using Gemini AI.
                 </p>
               </div>
 
+              {/* Dropzone */}
               <FileDropzone
                 onFileParsed={handleFileParsed}
                 isLoading={isMapping}
               />
 
-              {!parsedData && (
-                <div className="flex flex-col items-center gap-4 pt-4">
-                  <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
-                    Or try our test cases
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-3">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={async () => {
-                        const csvData = `first_name,last_name,email,phone,company,role,birth_date\nAlice,Smith,alice@example.com,555-0101,Acme Corp,Manager,1985-05-15\nBob,Jones,bob@example.com,555-0102,Beta Inc,Engineer,1990-08-22\nCharlie,Brown,charlie@example.com,555-0103,Gamma LLC,Designer,1988-02-14`;
-                        const file = new File([csvData], "clean_data.csv", { type: "text/csv" });
-                        handleFileParsed(await parseFile(file));
-                      }}
-                      className="border-[oklch(0.7_0.18_160/30%)] hover:bg-[oklch(0.7_0.18_160/10%)] hover:text-foreground"
-                    >
-                      Clean Data
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={async () => {
-                        const csvData = `client_fname,client_lname,emaill,phone_num,company_name,jobtitle,dob,legacy_id,notes\nJohn,Doe, john.doe@XYZ.com ,555-0101,Acme Corp,Manager,05/15/1985,C-101,VIP client\nJane,Smith,JANE@smith.co.uk,  555-0102 ,TechFlow,Engineer,1990-08-22,C-102,\nAlice,Johnson,alice@invalid_email,555-0103,DataSync,"Data Scientist",invalid_date,C-103,Follow up next week`;
-                        const file = new File([csvData], "messy_data.csv", { type: "text/csv" });
-                        handleFileParsed(await parseFile(file));
-                      }}
-                      className="border-[oklch(0.8_0.16_80/30%)] hover:bg-[oklch(0.8_0.16_80/10%)] hover:text-foreground"
-                    >
-                      Messy Headers
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={async () => {
-                        const csvData = `fname,phone,org,notes\nEve,555-0109,Delta,No email provided\nFrank,555-0110,Epsilon,Need to contact`;
-                        const file = new File([csvData], "missing_req_data.csv", { type: "text/csv" });
-                        handleFileParsed(await parseFile(file));
-                      }}
-                      className="border-[oklch(0.6_0.2_25/30%)] hover:bg-[oklch(0.6_0.2_25/10%)] hover:text-foreground"
-                    >
-                      Edge Case (Missing Req)
-                    </Button>
+              {/* Test cases or parsed data */}
+              {!parsedData ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="space-y-8"
+                >
+                  {/* Quick test cases */}
+                  <div className="flex flex-col items-center gap-5">
+                    <div className="flex items-center gap-3">
+                      <div className="h-px w-12 bg-linear-to-r from-transparent to-border" />
+                      <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
+                        Or try a sample
+                      </p>
+                      <div className="h-px w-12 bg-linear-to-l from-transparent to-border" />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full">
+                      <button
+                        onClick={async () => {
+                          const csvData = `first_name,last_name,email,phone,company,role,birth_date\nAlice,Smith,alice@example.com,555-0101,Acme Corp,Manager,1985-05-15\nBob,Jones,bob@example.com,555-0102,Beta Inc,Engineer,1990-08-22\nCharlie,Brown,charlie@example.com,555-0103,Gamma LLC,Designer,1988-02-14`;
+                          const file = new File([csvData], "clean_data.csv", { type: "text/csv" });
+                          handleFileParsed(await parseFile(file));
+                        }}
+                        className="group relative flex flex-col items-start gap-2 p-4 rounded-xl border border-[oklch(0.7_0.18_160/20%)] bg-[oklch(0.14_0.015_265/40%)] hover:border-[oklch(0.7_0.18_160/50%)] hover:bg-[oklch(0.7_0.18_160/8%)] transition-all duration-300 hover:-translate-y-0.5 text-left cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-[oklch(0.7_0.18_160/12%)]">
+                            <CheckCircle2 className="w-4 h-4 text-[oklch(0.7_0.18_160)]" />
+                          </div>
+                          <span className="text-sm font-semibold text-foreground">Clean Data</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">
+                          3 rows, 7 columns — perfectly formatted with all required fields.
+                        </p>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const csvData = `client_fname,client_lname,emaill,phone_num,company_name,jobtitle,dob,legacy_id,notes\nJohn,Doe, john.doe@XYZ.com ,555-0101,Acme Corp,Manager,05/15/1985,C-101,VIP client\nJane,Smith,JANE@smith.co.uk,  555-0102 ,TechFlow,Engineer,1990-08-22,C-102,\nAlice,Johnson,alice@invalid_email,555-0103,DataSync,"Data Scientist",invalid_date,C-103,Follow up next week`;
+                          const file = new File([csvData], "messy_data.csv", { type: "text/csv" });
+                          handleFileParsed(await parseFile(file));
+                        }}
+                        className="group relative flex flex-col items-start gap-2 p-4 rounded-xl border border-[oklch(0.8_0.16_80/20%)] bg-[oklch(0.14_0.015_265/40%)] hover:border-[oklch(0.8_0.16_80/50%)] hover:bg-[oklch(0.8_0.16_80/8%)] transition-all duration-300 hover:-translate-y-0.5 text-left cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-[oklch(0.8_0.16_80/12%)]">
+                            <Sparkles className="w-4 h-4 text-[oklch(0.8_0.16_80)]" />
+                          </div>
+                          <span className="text-sm font-semibold text-foreground">Messy Headers</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">
+                          Typos, extra spaces, mixed date formats — test AI resilience.
+                        </p>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const csvData = `fname,phone,org,notes\nEve,555-0109,Delta,No email provided\nFrank,555-0110,Epsilon,Need to contact`;
+                          const file = new File([csvData], "missing_req_data.csv", { type: "text/csv" });
+                          handleFileParsed(await parseFile(file));
+                        }}
+                        className="group relative flex flex-col items-start gap-2 p-4 rounded-xl border border-[oklch(0.6_0.2_25/20%)] bg-[oklch(0.14_0.015_265/40%)] hover:border-[oklch(0.6_0.2_25/50%)] hover:bg-[oklch(0.6_0.2_25/8%)] transition-all duration-300 hover:-translate-y-0.5 text-left cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-[oklch(0.6_0.2_25/12%)]">
+                            <TriangleAlert className="w-4 h-4 text-[oklch(0.6_0.2_25)]" />
+                          </div>
+                          <span className="text-sm font-semibold text-foreground">Edge Case</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">
+                          Missing email & last name — see how validation catches gaps.
+                        </p>
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const headers = "first_name,last_name,email,phone,company,title,date_of_birth,legacy_id\n";
+                          const rows = Array.from({ length: 1500 }).map((_, i) => {
+                            // Inject sparse cells and empty rows randomly
+                            if (i % 100 === 0) return ",,,"; // highly sparse / ragged
+                            if (i % 50 === 0) return ""; // blank line (skipped by papa but good test)
+                            
+                            const fname = `User${i}`;
+                            const lname = i % 5 === 0 ? "" : `Smith${i}`;
+                            const email = `${fname}.${lname || "test"}@example.com`;
+                            const phone = i % 8 === 0 ? "" : `555-${String(i).padStart(4, "0")}`;
+                            const company = "TestCorp";
+                            const title = "Engineer";
+                            const dob = "1990-01-01";
+                            return `${fname},${lname},${email},${phone},${company},${title},${dob},ID${i}`;
+                          }).filter(Boolean).join("\n");
+                          
+                          const csvData = headers + rows;
+                          const file = new File([csvData], "large_sparse_data.csv", { type: "text/csv" });
+                          handleFileParsed(await parseFile(file));
+                        }}
+                        className="group relative flex flex-col items-start gap-2 p-4 rounded-xl border border-[oklch(0.65_0.2_250/20%)] bg-[oklch(0.14_0.015_265/40%)] hover:border-[oklch(0.65_0.2_250/50%)] hover:bg-[oklch(0.65_0.2_250/8%)] transition-all duration-300 hover:-translate-y-0.5 text-left cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-[oklch(0.65_0.2_250/12%)]">
+                            <Zap className="w-4 h-4 text-[oklch(0.65_0.2_250)]" />
+                          </div>
+                          <span className="text-sm font-semibold text-foreground">Large Data</span>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">
+                          1,500 rows with gaps, sparse fields, and ragged rows.
+                        </p>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
 
-              {parsedData && (
+                  {/* Feature cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {featureCards.map((card, i) => (
+                      <motion.div
+                        key={card.title}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 + i * 0.1 }}
+                        className="feature-card"
+                      >
+                        <div
+                          className="flex items-center justify-center w-10 h-10 rounded-xl mb-3"
+                          style={{ backgroundColor: card.bgColor }}
+                        >
+                          <card.icon className="w-5 h-5" style={{ color: card.color }} />
+                        </div>
+                        <h3 className="text-sm font-semibold text-foreground mb-1">
+                          {card.title}
+                        </h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {card.description}
+                        </p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              ) : (
                 <>
                   <DataPreview data={parsedData} />
-                  <div className="flex justify-center">
+                  <div className="flex flex-col items-center gap-3 pt-2">
                     <Button
                       size="lg"
                       onClick={handleStartMapping}
                       disabled={isMapping}
-                      className="h-12 px-8 text-base font-semibold bg-[oklch(0.65_0.2_250)] hover:bg-[oklch(0.6_0.22_250)] text-white rounded-xl shadow-[0_0_30px_oklch(0.65_0.2_250/25%)] hover:shadow-[0_0_40px_oklch(0.65_0.2_250/35%)] transition-all duration-300"
+                      className="h-14 px-10 text-base font-bold bg-linear-to-r from-[oklch(0.6_0.22_250)] to-[oklch(0.55_0.2_280)] hover:from-[oklch(0.55_0.24_250)] hover:to-[oklch(0.5_0.22_280)] text-white rounded-2xl cta-shimmer transition-all duration-300 shadow-[0_0_40px_oklch(0.65_0.2_250/25%)]"
                     >
                       {isMapping ? (
                         <>
-                          <Loader2 className="mr-2 w-4 h-4 animate-spin" />
-                          Mapping…
+                          <Loader2 className="mr-2.5 w-5 h-5 animate-spin" />
+                          Analyzing columns…
                         </>
                       ) : (
                         <>
-                          <Sparkles className="mr-2 w-4 h-4" />
+                          <Sparkles className="mr-2.5 w-5 h-5" />
                           Map with AI
                         </>
                       )}
                     </Button>
+                    <p className="text-xs text-muted-foreground/60">
+                      Gemini will match your columns to the target schema
+                    </p>
                   </div>
                 </>
               )}
@@ -289,6 +449,10 @@ export default function AppPage() {
               className="space-y-6"
             >
               <div className="text-center space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[oklch(0.7_0.18_160/20%)] bg-[oklch(0.7_0.18_160/6%)] text-xs font-medium text-[oklch(0.7_0.18_160)] mb-2">
+                  <Brain className="w-3 h-3" />
+                  AI Analysis Complete
+                </div>
                 <h2 className="text-2xl font-bold text-foreground">
                   AI Schema Mapping
                 </h2>
@@ -297,7 +461,7 @@ export default function AppPage() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 lg:items-stretch min-h-[500px]">
                 <MappingGraph
                   mapping={mapping}
                   sourceHeaders={parsedData.headers}
@@ -352,8 +516,9 @@ export default function AppPage() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.2 }}
-                className="flex items-center justify-center w-24 h-24 mx-auto rounded-full bg-[oklch(0.7_0.18_160/15%)]"
+                className="relative flex items-center justify-center w-24 h-24 mx-auto rounded-full bg-[oklch(0.7_0.18_160/15%)] border border-[oklch(0.7_0.18_160/20%)]"
               >
+                <div className="absolute inset-0 rounded-full bg-[oklch(0.7_0.18_160/8%)] animate-ping" />
                 <CheckCircle2 className="w-12 h-12 text-[oklch(0.7_0.18_160)]" />
               </motion.div>
 
