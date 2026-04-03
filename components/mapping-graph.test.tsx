@@ -34,6 +34,7 @@ jest.mock("framer-motion", () => {
       ...actual.motion,
       div: Object.assign(React.forwardRef((props: any, ref: any) => {
         const { initial, animate, exit, variants, transition, ...rest } = props;
+        if ((window as any).simulateNullRef) { return <div {...rest} />; }
         return <div ref={ref} {...rest} />;
       }), { displayName: "MotionDiv" }),
       span: Object.assign(React.forwardRef((props: any, ref: any) => {
@@ -170,5 +171,12 @@ describe("MappingGraph", () => {
 
     // fitView is called once by ResizeObserver (via synchronous rAF)
     expect(mockFitView).toHaveBeenCalledWith({ padding: 0.15, duration: 300, maxZoom: 1 });
+  });
+
+  it("handles null container ref safely", () => {
+    (window as any).simulateNullRef = true;
+    render(<MappingGraph mapping={mapping as any} sourceHeaders={sourceHeaders} />);
+    expect(resizeCallback).toBeNull();
+    (window as any).simulateNullRef = false;
   });
 });
