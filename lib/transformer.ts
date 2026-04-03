@@ -18,7 +18,8 @@ export function applyTransforms(
       const sourceIndex = headers.indexOf(mapping.source);
       if (sourceIndex === -1) continue;
 
-      let value = row[sourceIndex] ?? "";
+      const rawValue = row[sourceIndex];
+      let value = rawValue !== undefined && rawValue !== null ? String(rawValue) : "";
       const transforms = mapping.transform
         .split(",")
         .map((t) => t.trim())

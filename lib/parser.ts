@@ -20,7 +20,16 @@ export function parseCSV(file: File): Promise<ParsedData> {
         const headers = data[0].map((h) => h.trim());
         const rows = data
           .slice(1)
-          .filter((row) => row.some((cell) => cell.trim() !== ""));
+          .filter((row) => row.some((cell) => cell.trim() !== ""))
+          .map((row) => {
+            // pad row array with empty strings if it's shorter than headers
+            // and truncate if it's longer
+            const padded = [...row];
+            while (padded.length < headers.length) {
+              padded.push("");
+            }
+            return padded.slice(0, headers.length);
+          });
 
         resolve({
           headers,
