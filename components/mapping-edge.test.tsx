@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import { render } from "@testing-library/react";
 import { ConfidenceEdge } from "./mapping-edge";
 
