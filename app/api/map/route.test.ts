@@ -106,6 +106,23 @@ describe("POST /api/map", () => {
     expect(json).toEqual(mockParsedResponse);
   });
 
+  it("defaults Sample Rows if sampleRows is empty array", async () => {
+    process.env.OPENAI_API_KEY = "test-key";
+    
+    // Using empty array forces `sampleRows[0] || []`
+    mockParse.mockResolvedValueOnce({
+      choices: [{ message: { parsed: {} } }]
+    });
+
+    const req = createMockRequest({
+      headers: ["name"],
+      sampleRows: [],
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+  });
+
   it("returns 500 when openai throws an error", async () => {
     process.env.OPENAI_API_KEY = "test-key";
     
