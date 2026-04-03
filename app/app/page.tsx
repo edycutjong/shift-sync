@@ -50,7 +50,7 @@ const featureCards = [
   {
     icon: Brain,
     title: "AI Column Mapping",
-    description: "Gemini analyzes headers and sample rows to intelligently match source columns to your target schema.",
+    description: "Our advanced AI analyzes headers and sample rows to intelligently match source columns to your target schema.",
     color: "oklch(0.72 0.18 250)",
     bgColor: "oklch(0.65 0.2 250 / 10%)",
   },
@@ -261,7 +261,7 @@ export default function AppPage() {
                 </h2>
                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
                   Drop a CSV file with client data. We&apos;ll analyze the columns and
-                  map them to your database schema using Gemini AI.
+                  map them to your database schema using our AI engine.
                 </p>
               </div>
 
@@ -429,7 +429,7 @@ export default function AppPage() {
                       )}
                     </Button>
                     <p className="text-xs text-muted-foreground/60">
-                      Gemini will match your columns to the target schema
+                      The AI will match your columns to the target schema
                     </p>
                   </div>
                 </>
