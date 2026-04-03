@@ -87,7 +87,7 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
     "oklch(0.6 0.2 285)",   // Purple
     "oklch(0.7 0.18 160)",  // Emerald
   ];
-  const accent = accentColors[index] || accentColors[0];
+  const accent = accentColors[index];
 
   return (
     <motion.div
